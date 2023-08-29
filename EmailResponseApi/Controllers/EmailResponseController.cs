@@ -35,7 +35,7 @@ namespace EmailResponseApi.Controllers
 
                     var jsonBody = @"{
                 ""model"": ""gpt-3.5-turbo"",
-                ""messages"": [
+                ""messages"": [ 
                     {
                         ""role"": ""system"",
                         ""content"": ""You are a helpful assistant that generates formal responses of 3 to 5 lines in proper formating and indenting.""
