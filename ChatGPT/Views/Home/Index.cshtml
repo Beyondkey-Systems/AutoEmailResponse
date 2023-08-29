@@ -1,0 +1,108 @@
+﻿@model string
+
+<h1>Email Response Generator</h1>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.ckeditor.com/4.16.1/standard/ckeditor.js"></script>
+<div>
+    <textarea name="content" id="user-input" rows="6" cols="1000"></textarea>
+    
+</div>
+<div>
+    <button id="submit-btn">Generate Email Response</button>
+</div>
+<div>
+    <label id="response-label"></label>
+</div>
+<div id="error-message" class="error-message"></div>
+<!-- Loader element -->
+<div id="loader" class="loader">
+    <img src="~/Images/loading.gif" />
+</div>
+<style type="text/css">
+    /* Loader CSS */
+    .loader {
+        margin: auto;
+        display: none; /* Initially hidden */
+    }
+
+        .loader.visible {
+            display: block; /* Show the loader */
+            opacity: 1;
+        }
+
+        .loader.hidden {
+            opacity: 0;
+        }
+</style>
+
+
+<script>
+   
+    $(function () {
+        CKEDITOR.replace('user-input');
+
+        $('#submit-btn').click(function () {
+            function showLoader() {
+                $('#loader').addClass('visible').removeClass('hidden');
+            }
+
+            function hideLoader() {
+                $('#loader').addClass('hidden').removeClass('visible');
+            }
+
+            // Show loader before AJAX call
+            showLoader();
+            function showError(message) {
+                $('#error-message').text(message).show();
+            }
+            
+            //var userInput = "Suggest email response for the following:<br/>" + CKEDITOR.instances['user-input'].getData().replace(/\s+/g, ' ');
+            var userInput =  CKEDITOR.instances['user-input'].getData().replace(/<img\b[^>]*>/ig, '').replace(/\s+/g, ' ');
+
+
+            // Construct JSON payload
+            var payload = {
+                model: "gpt-3.5-turbo",
+                messages: [
+                    {
+                        role: "user",
+                        content: userInput
+                    }
+                ]
+            };
+
+           $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("GenerateResponse", "Home")",
+                    dataType: "json",
+                    data: JSON.stringify({ inputtext: userInput }),
+                    contentType: "application/json; charset=utf-8",
+                    beforeSend: function () {
+                        // Show loader before sending the AJAX request
+                        $('#response-label').text("");
+                        showError("");
+                        showLoader();
+                    },
+                    success: function (data) {
+
+                        var response = JSON.parse(data);
+                        var content = response.choices[0].message.content;
+                        content = content.replace(/\n/g, '<br/>');
+                        $('#response-label').html(content);
+                    },
+                   error: function (xhr, status, error) {
+                       // Hide loader and show error message
+                       hideLoader();
+                       $('#response-label').text("");
+                       showError("An error occurred: " + error);
+                   },
+                    complete: function () {
+                        // Hide loader after AJAX call is complete
+                        hideLoader();
+                    }
+
+                });
+
+        });
+    });
+</script>
