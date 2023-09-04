@@ -10,10 +10,11 @@ using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
+using Microsoft.Extensions.Configuration;
 
 namespace EmailResponseApi.Controllers
 {
+   
     public class CustomResponse
     {
         public HttpStatusCode StatusCode { get; set; }
@@ -24,6 +25,11 @@ namespace EmailResponseApi.Controllers
     [ApiController]
     public class EmailResponseController : ControllerBase
     {
+        private readonly IConfiguration _configuration;
+        public EmailResponseController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
         [HttpGet("GenerateResponse")]
         public async Task<CustomResponse> GenerateResponse(string inputText)
         {
@@ -31,7 +37,9 @@ namespace EmailResponseApi.Controllers
             {
                 // Remove additional white spaces from the input text
                 inputText = Regex.Replace(inputText, @"\s+", " ").Trim();
-                var apiKey = "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";
+                string formattedText = $"Text: \"\"\"\n{inputText}\n\"\"\"";
+
+                var apiKey = _configuration["apiKey"];
                 var endpoint = "https://api.openai.com/v1/chat/completions";
 
                 using (var client = new HttpClient())
@@ -39,8 +47,9 @@ namespace EmailResponseApi.Controllers
                     var request = new HttpRequestMessage(HttpMethod.Post, endpoint);
                     request.Headers.Add("Authorization", $"Bearer {apiKey}");
 
-                    var customInstruction = "You are an assistant that should understand user query and should provides information as responder from Beyond key Systems (https://www.beyondkey.com) in 3 to 5 lines and should use information like their services, technologies, solutions, career opportunities, about company, insights, locations etc. for better result should visit Beyond Key website at https://www.beyondkey.com.";
+                    //var customInstruction = "You are an assistant that should understand user query and should provides information as responder from Beyond key Systems (https://www.beyondkey.com) in 3 to 5 lines and should use information like their services, technologies, solutions, career opportunities, about company, insights, locations etc. for better result should visit Beyond Key website at https://www.beyondkey.com.";
 
+                    var customInstruction = _configuration["CustomInstruction"];
 
                     var jsonBody = new
                     {
@@ -48,7 +57,7 @@ namespace EmailResponseApi.Controllers
                         messages = new[]
                         {
                             new { role = "system", content = customInstruction },
-                            new { role = "user", content = inputText }
+                            new { role = "user", content = formattedText }
                         }
                     };
 
@@ -63,11 +72,14 @@ namespace EmailResponseApi.Controllers
                     {
                         throw new Exception($"Error calling OpenAI API: {response.StatusCode} - {responseContent}");
                     }
-                    var finalresponse = Regex.Replace(responseContent, @"(As an AI assistant,|As an AI language model,)", "", RegexOptions.IgnoreCase).Trim();
+                    string pattern = @"[^,]*\b(AI|chatbot)\b[^,]*,";
+
+                    string finalResponse = Regex.Replace(responseContent, pattern, "", RegexOptions.IgnoreCase);
+
                     var customResponse = new CustomResponse
                     {
                         StatusCode = response.StatusCode,
-                        Content = finalresponse
+                        Content = finalResponse
                     };
 
                     return customResponse;
@@ -83,8 +95,5 @@ namespace EmailResponseApi.Controllers
                 };
             }
         }
-
-
-
     }
 }
