@@ -88,7 +88,7 @@ namespace EmailResponseApi.Controllers
             }
             catch (Exception ex)
             {
-                SendErrorEmail(ex);
+                SendErrorEmail(ex, WebsiteURL);
                 return new CustomResponse
                 {
                     StatusCode = HttpStatusCode.InternalServerError,
@@ -96,7 +96,7 @@ namespace EmailResponseApi.Controllers
                 };
             }
         }
-        private void SendErrorEmail(Exception exception)
+        private void SendErrorEmail(Exception exception, string WebsiteURL)
         {
             try
             {
@@ -112,7 +112,7 @@ namespace EmailResponseApi.Controllers
                 var mailMessage = new MailMessage
                 {
                     From = new MailAddress(_configuration["FromEmail"]),
-                    Subject = "Error occurred in Beyondkey auto email responder API",
+                    Subject = "Error occurred at "+WebsiteURL+" auto email responder API",
                     Body = exception.Message + "\n" + exception.StackTrace, // Error stack trace
                 };
 
