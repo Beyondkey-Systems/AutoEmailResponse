@@ -32,7 +32,7 @@ namespace EmailResponseApi.Controllers
             _configuration = configuration;
         }
         [HttpGet("GenerateResponse")]
-        public async Task<CustomResponse> GenerateResponse(string inputText)
+        public async Task<CustomResponse> GenerateResponse(string inputText, string WebsiteURL)
         {
             try
             {
@@ -50,7 +50,7 @@ namespace EmailResponseApi.Controllers
 
                     //var customInstruction = "You are an assistant that should understand user query and should provides information as responder from Beyond key Systems (https://www.beyondkey.com) in 3 to 5 lines and should use information like their services, technologies, solutions, career opportunities, about company, insights, locations etc. for better result should visit Beyond Key website at https://www.beyondkey.com.";
 
-                    var customInstruction = _configuration["CustomInstruction"];
+                    var customInstruction = WebsiteURL.Trim().Contains("beyondintranet")?_configuration["CustomInstructionBeyondIntranet"] : _configuration["CustomInstructionBeyondkey"]; 
 
                     var jsonBody = new
                     {
