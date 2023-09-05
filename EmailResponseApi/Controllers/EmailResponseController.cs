@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Microsoft.Extensions.Configuration;
+using System.Net.Mail;
 
 namespace EmailResponseApi.Controllers
 {
@@ -87,12 +88,42 @@ namespace EmailResponseApi.Controllers
             }
             catch (Exception ex)
             {
-                // Handle the exception appropriately (e.g., log, return error response, etc.)
+                SendErrorEmail(ex);
                 return new CustomResponse
                 {
                     StatusCode = HttpStatusCode.InternalServerError,
                     Content = "An error occurred while processing the request."
                 };
+            }
+        }
+        private void SendErrorEmail(Exception exception)
+        {
+            try
+            {
+                // Gmail SMTP settings
+                var smtpClient = new SmtpClient("smtp.gmail.com")
+                {
+                    Port = 587,
+                    Credentials = new NetworkCredential(_configuration["FromEmail"], _configuration["EmailPassword"] ),
+                    EnableSsl = true,   
+                    UseDefaultCredentials = false,
+                };
+
+                var mailMessage = new MailMessage
+                {
+                    From = new MailAddress(_configuration["FromEmail"]),
+                    Subject = "Error occurred in Beyondkey auto email responder API",
+                    Body = exception.Message + "\n" + exception.StackTrace, // Error stack trace
+                };
+
+                mailMessage.To.Add(_configuration["ReceiverEmail"]); 
+
+                smtpClient.Send(mailMessage);
+            }
+            catch (Exception ex)
+            {
+                // Handle any exceptions that occur during email sending, e.g., log them
+                Console.WriteLine("Error sending email: " + ex.Message);
             }
         }
     }
