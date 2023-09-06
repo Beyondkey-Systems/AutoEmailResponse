@@ -32,12 +32,12 @@ namespace EmailResponseApi.Controllers
             _configuration = configuration;
         }
         [HttpGet("GenerateResponse")]
-        public async Task<CustomResponse> GenerateResponse(string inputText, string WebsiteURL)
+        public async Task<CustomResponse> GenerateResponse(string inputText, string WebsiteURL, string FullName)
         {
             try
             {
                 // Remove additional white spaces from the input text
-                inputText = Regex.Replace(inputText, @"\s+", " ").Trim();
+                inputText ="Name: "+FullName+ "|"+ Regex.Replace(inputText, @"\s+", " ").Trim();
                 string formattedText = $"Text: \"\"\"\n{inputText}\n\"\"\"";
 
                 var apiKey = _configuration["apiKey"];
