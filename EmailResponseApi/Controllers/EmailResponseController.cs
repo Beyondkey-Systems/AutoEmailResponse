@@ -15,7 +15,7 @@ using System.Net.Mail;
 
 namespace EmailResponseApi.Controllers
 {
-   
+
     public class CustomResponse
     {
         public HttpStatusCode StatusCode { get; set; }
@@ -37,7 +37,7 @@ namespace EmailResponseApi.Controllers
             try
             {
                 // Remove additional white spaces from the input text
-                inputText ="Name: "+FullName+ "|"+ Regex.Replace(inputText, @"\s+", " ").Trim();
+                inputText = "Name: " + FullName + "|" + Regex.Replace(inputText, @"\s+", " ").Trim();
                 string formattedText = $"Text: \"\"\"\n{inputText}\n\"\"\"";
 
                 var apiKey = _configuration["apiKey"];
@@ -50,7 +50,23 @@ namespace EmailResponseApi.Controllers
 
                     //var customInstruction = "You are an assistant that should understand user query and should provides information as responder from Beyond key Systems (https://www.beyondkey.com) in 3 to 5 lines and should use information like their services, technologies, solutions, career opportunities, about company, insights, locations etc. for better result should visit Beyond Key website at https://www.beyondkey.com.";
 
-                    var customInstruction = WebsiteURL.Trim().Contains("beyondintranet")?_configuration["CustomInstructionBeyondIntranet"] : _configuration["CustomInstructionBeyondkey"]; 
+                    var customInstruction = string.Empty;
+                    if (WebsiteURL.Trim().Contains("beyondintranet"))
+                    {
+                        customInstruction = _configuration["CustomInstructionBeyondIntranet1"] + " ";
+                        customInstruction += "For 'Product' inquiries, i can be asked about specific products like 'HR Directory,' 'Organizational Chart,' etc or similar kind of products., and I'll provide relevant links as specified here. ";
+                        var products = _configuration.GetSection("BeyondIntranetProducts");
+                        foreach (var product in products.GetChildren())
+                        {
+                            customInstruction += $"You can learn more about '{product.Key}' here: {product.Value}|";
+                        }
+                        customInstruction += "If no relevant product found then direct to beyond intranet website (https://www.beyondintranet.com) : Product page.";
+
+
+                        customInstruction += " " + _configuration["CustomInstructionBeyondIntranet2"];
+                    }
+                    else
+                        customInstruction = _configuration["CustomInstructionBeyondkey"];
 
                     var jsonBody = new
                     {
@@ -77,6 +93,26 @@ namespace EmailResponseApi.Controllers
 
                     string finalResponse = Regex.Replace(responseContent, pattern, "", RegexOptions.IgnoreCase);
 
+                    if (_configuration["DisplayPoweredByBKChatbot"] == "True")
+                    {
+                        var jsonResponse = JObject.Parse(finalResponse);
+                        // Update the inner "content" field
+                        var choicesArray = jsonResponse["choices"] as JArray;
+
+                        if (choicesArray != null && choicesArray.Count > 0)
+                        {
+                            // Access the first item in "choices" and update its "content" field
+                            var firstChoice = choicesArray[0] as JObject;
+                            if (firstChoice != null)
+                            {
+                                firstChoice["message"]["content"] = firstChoice["message"]["content"].ToString() + "\n\n [Powered by Beyond Key Chatbot]";
+                            }
+                        }
+
+                        // Serialize the updated JSON back to a string
+                        finalResponse = jsonResponse.ToString();
+
+                    }
                     var customResponse = new CustomResponse
                     {
                         StatusCode = response.StatusCode,
@@ -104,19 +140,19 @@ namespace EmailResponseApi.Controllers
                 var smtpClient = new SmtpClient("smtp.gmail.com")
                 {
                     Port = 587,
-                    Credentials = new NetworkCredential(_configuration["FromEmail"], _configuration["EmailPassword"] ),
-                    EnableSsl = true,   
+                    Credentials = new NetworkCredential(_configuration["FromEmail"], _configuration["EmailPassword"]),
+                    EnableSsl = true,
                     UseDefaultCredentials = false,
                 };
 
                 var mailMessage = new MailMessage
                 {
                     From = new MailAddress(_configuration["FromEmail"]),
-                    Subject = "Error occurred at "+WebsiteURL+" auto email responder API",
+                    Subject = "Error occurred at " + WebsiteURL + " auto email responder API",
                     Body = exception.Message + "\n" + exception.StackTrace, // Error stack trace
                 };
 
-                mailMessage.To.Add(_configuration["ReceiverEmail"]); 
+                mailMessage.To.Add(_configuration["ReceiverEmail"]);
 
                 smtpClient.Send(mailMessage);
             }
