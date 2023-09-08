@@ -60,10 +60,7 @@ namespace EmailResponseApi.Controllers
                         {
                             customInstruction += $"You can learn more about '{product.Key}' here: {product.Value}|";
                         }
-                        customInstruction += "If no relevant product found then direct to beyond intranet website (https://www.beyondintranet.com) : Product page.";
-
-
-                        customInstruction += " " + _configuration["CustomInstructionBeyondIntranet2"];
+                        customInstruction += _configuration["CustomInstructionBeyondIntranet2"];
                     }
                     else
                         customInstruction = _configuration["CustomInstructionBeyondkey"];
