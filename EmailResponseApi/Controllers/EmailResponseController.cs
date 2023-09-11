@@ -59,6 +59,8 @@ namespace EmailResponseApi.Controllers
                             customInstruction += $"You can learn more about '{product.Key}' here: {product.Value}|";
                         }
                         customInstruction += _configuration["CustomInstructionBeyondIntranet2"];
+                        customInstruction += _configuration["SampleResponse1"];
+                        customInstruction += _configuration["SampleResponse2"];
                     }
                     else
                         customInstruction = _configuration["CustomInstructionBeyondkey"];
@@ -102,7 +104,7 @@ namespace EmailResponseApi.Controllers
                             var firstChoice = choicesArray[0] as JObject;
                             if (firstChoice != null)
                             {
-                                firstChoice["message"]["content"] = $"{firstChoice["message"]["content"]}\n[Powered by Beyond Key Chatbot]";
+                                firstChoice["message"]["content"] = $"{firstChoice["message"]["content"]} \n[Powered by Beyond Key Chatbot]";
                             }
                         }
 
