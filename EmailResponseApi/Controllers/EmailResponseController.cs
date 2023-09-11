@@ -48,8 +48,6 @@ namespace EmailResponseApi.Controllers
                     var request = new HttpRequestMessage(HttpMethod.Post, endpoint);
                     request.Headers.Add("Authorization", $"Bearer {apiKey}");
 
-                    //var customInstruction = "You are an assistant that should understand user query and should provides information as responder from Beyond key Systems (https://www.beyondkey.com) in 3 to 5 lines and should use information like their services, technologies, solutions, career opportunities, about company, insights, locations etc. for better result should visit Beyond Key website at https://www.beyondkey.com.";
-
                     var customInstruction = string.Empty;
                     if (WebsiteURL.Trim().Contains("beyondintranet"))
                     {
@@ -86,7 +84,9 @@ namespace EmailResponseApi.Controllers
                     {
                         throw new Exception($"Error calling OpenAI API: {response.StatusCode} - {responseContent}");
                     }
-                    string pattern = @"[^,]*\b(AI|chatbot)\b[^,]*,";
+
+                    string[] ignoreKeywords = _configuration.GetSection("IgnoreKeywords").Get<string[]>();
+                    string pattern = "(" + string.Join("|", ignoreKeywords.Select(kw => Regex.Escape(kw))) + "),";
 
                     string finalResponse = Regex.Replace(responseContent, pattern, "", RegexOptions.IgnoreCase);
 
@@ -102,7 +102,7 @@ namespace EmailResponseApi.Controllers
                             var firstChoice = choicesArray[0] as JObject;
                             if (firstChoice != null)
                             {
-                                firstChoice["message"]["content"] = firstChoice["message"]["content"].ToString() + "\n\n [Powered by Beyond Key Chatbot]";
+                                firstChoice["message"]["content"] = $"{firstChoice["message"]["content"]}\n[Powered by Beyond Key Chatbot]";
                             }
                         }
 
@@ -121,7 +121,7 @@ namespace EmailResponseApi.Controllers
             }
             catch (Exception ex)
             {
-                SendErrorEmail(ex, WebsiteURL);
+                SendErrorEmail(ex, WebsiteURL, inputText);
                 return new CustomResponse
                 {
                     StatusCode = HttpStatusCode.InternalServerError,
@@ -129,7 +129,10 @@ namespace EmailResponseApi.Controllers
                 };
             }
         }
-        private void SendErrorEmail(Exception exception, string WebsiteURL)
+      
+    
+
+    private void SendErrorEmail(Exception exception, string WebsiteURL,string inputText)
         {
             try
             {
@@ -146,7 +149,7 @@ namespace EmailResponseApi.Controllers
                 {
                     From = new MailAddress(_configuration["FromEmail"]),
                     Subject = "Error occurred at " + WebsiteURL + " auto email responder API",
-                    Body = exception.Message + "\n" + exception.StackTrace, // Error stack trace
+                    Body = exception.Message + "\n" + exception.StackTrace + "\n" + "Question Asked: "+inputText, // Error stack trace
                 };
 
                 mailMessage.To.Add(_configuration["ReceiverEmail"]);
