@@ -91,27 +91,24 @@ namespace EmailResponseApi.Controllers
                     string pattern = "(" + string.Join("|", ignoreKeywords.Select(kw => Regex.Escape(kw))) + "),";
 
                     string finalResponse = Regex.Replace(responseContent, pattern, "", RegexOptions.IgnoreCase);
+                    var jsonResponse = JObject.Parse(finalResponse);
+                    // Update the inner "content" field
+                    var choicesArray = jsonResponse["choices"] as JArray;
 
-                    if (_configuration["DisplayPoweredByBKChatbot"] == "True")
+                    if (choicesArray != null && choicesArray.Count > 0)
                     {
-                        var jsonResponse = JObject.Parse(finalResponse);
-                        // Update the inner "content" field
-                        var choicesArray = jsonResponse["choices"] as JArray;
-
-                        if (choicesArray != null && choicesArray.Count > 0)
+                        // Access the first item in "choices" and update its "content" field
+                        var firstChoice = choicesArray[0] as JObject;
+                        if (firstChoice != null)
                         {
-                            // Access the first item in "choices" and update its "content" field
-                            var firstChoice = choicesArray[0] as JObject;
-                            if (firstChoice != null)
-                            {
-                                firstChoice["message"]["content"] = $"{firstChoice["message"]["content"]} \n[Powered by Beyond Key Chatbot]";
-                            }
+                            firstChoice["message"]["content"] = _configuration["DisplayPoweredByBKChatbot"] == "True" ? $"{firstChoice["message"]["content"]} \n[Powered by Beyond Key Chatbot]" : $"{firstChoice["message"]["content"]}";
+                            firstChoice["message"]["content"] = firstChoice["message"]["content"].ToString().Replace("\n", "<br/>");
                         }
-
-                        // Serialize the updated JSON back to a string
-                        finalResponse = jsonResponse.ToString();
-
                     }
+
+                    // Serialize the updated JSON back to a string
+                    finalResponse = jsonResponse.ToString();
+
                     var customResponse = new CustomResponse
                     {
                         StatusCode = response.StatusCode,
@@ -131,10 +128,10 @@ namespace EmailResponseApi.Controllers
                 };
             }
         }
-      
-    
 
-    private void SendErrorEmail(Exception exception, string WebsiteURL,string inputText)
+
+
+        private void SendErrorEmail(Exception exception, string WebsiteURL, string inputText)
         {
             try
             {
@@ -151,7 +148,7 @@ namespace EmailResponseApi.Controllers
                 {
                     From = new MailAddress(_configuration["FromEmail"]),
                     Subject = "Error occurred at " + WebsiteURL + " auto email responder API",
-                    Body = exception.Message + "\n" + exception.StackTrace + "\n" + "Question Asked: "+inputText, // Error stack trace
+                    Body = exception.Message + "\n" + exception.StackTrace + "\n" + "Question Asked: " + inputText, // Error stack trace
                 };
 
                 mailMessage.To.Add(_configuration["ReceiverEmail"]);
