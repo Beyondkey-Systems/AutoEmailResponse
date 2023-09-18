@@ -9,7 +9,7 @@
 		</tags>
 	</item>
 	<item>
-		<name>How our Itemized Bidding Software helped break down bids into parts to get itemized bid proposals for this Oil & Energy Company in the Netherlands.</name>
+		<name>How our Itemized Bidding Software helped break down bids into parts to get itemized bid proposals for this Oil and Energy Company in the Netherlands.</name>
 		<url>https://www.beyondintranet.com/pdf/Itemized-Bidding.pdf</url>
 		<tags>
 			<tagname>Itemized Bidding</tagname>
@@ -97,6 +97,249 @@
 		<tags>
 			<tagname>PowerApps</tagname>
 			<tagname>Manufacturing</tagname>
+		</tags>
+	</item>
+	<item>
+		<name>
+			Leading building materials company gets Power BI sales analytics dashboards to track their major KPIs .
+		</name>
+		<url>https://www.beyondintranet.com/pdf/fenix-BI.pdf</url>
+		<tags>
+			<tagname>Power BI</tagname>
+			<tagname>Manufacturing</tagname>
+		</tags>
+	</item>
+	<item>
+		<name>
+			Insurance Software company improves business efficiency.
+		</name>
+		<url>https://www.beyondintranet.com/pdf/lineslip-casestudy.pdf</url>
+		<tags>
+			<tagname>Power Automate</tagname>
+			<tagname>Software</tagname>
+		</tags>
+	</item>
+	<item>
+		<name>
+			Legacy InfoPath forms and workflows migrated to Nintex for a nonprofit research institute.
+		</name>
+		<url>https://www.beyondintranet.com/pdf/ATCC-migration.pdf</url>
+		<tags>
+			<tagname>SharePoint Migration</tagname>
+			<tagname>NPO</tagname>
+		</tags>
+	</item>
+	<item>
+		<name>
+			A construction company reinvented Vendor Onboarding and Offboarding in SharePoint Environment .
+		</name>
+		<url>https://www.beyondintranet.com/pdf/vendorOnboarding.pdf</url>
+		<tags>
+			<tagname>Employee Onboarding</tagname>
+			<tagname>Manufacturing</tagname>
+		</tags>
+	</item>
+	<item>
+		<name>
+			A Non-profit organization improved volunteers’ onboarding experience with a personalized SharePoint solution.
+		</name>
+		<url>https://www.beyondintranet.com/pdf/volunteerOnboarding.pdf</url>
+		<tags>
+			<tagname>Employee Onboarding</tagname>
+			<tagname>NPO</tagname>
+		</tags>
+	</item>
+	<item>
+		<name>
+			Sipcam Agro fast-tracks invoice processing and approvals using an OCR-based AI Solution.
+		</name>
+		<url>https://www.beyondintranet.com/pdf/sipcam-ocr.pdf</url>
+		<tags>
+			<tagname>Power Automate</tagname>
+			<tagname>OCR</tagname>
+			<tagname>Manufacturing</tagname>
+		</tags>
+	</item>
+	<item>
+		<name>
+			Australian NFP improves on document search and collaboration with a new modern SharePoint intranet.
+		</name>
+		<url>https://www.beyondintranet.com/pdf/grow.pdf</url>
+		<tags>
+			<tagname>Intranet</tagname>
+			<tagname>NPO</tagname>
+		</tags>
+	</item>
+	<item>
+		<name>
+			Financial Services Company Simplifies Document Management with Custom SharePoint Solution.
+		</name>
+		<url>https://www.beyondintranet.com/pdf/dms.pdf</url>
+		<tags>
+			<tagname>Document Management</tagname>
+			<tagname>Services</tagname>
+		</tags>
+	</item>
+	<item>
+		<name>
+			JSC Consultants leverages web-based custom development solutions to automate risk and action management and help organizations stay ISO 27001 compliant.
+		</name>
+		<url>https://www.beyondintranet.com/pdf/JSC-Consultants.pdf</url>
+		<tags>
+			<tagname>SharePoint</tagname>
+			<tagname>Services</tagname>
+		</tags>
+	</item>
+	<item>
+		<name>
+			Electronic Device Manufacturing Giant Leverages Power BI to Gain Insights From Their Production And Test Data
+		</name>
+		<url>https://www.beyondintranet.com/pdf/power-bi-dashboards-for-quality-manufacturing-of-devices.pdf</url>
+		<tags>
+			<tagname>Power BI</tagname>
+			<tagname>Manufacturing</tagname>
+		</tags>
+	</item>
+	<item>
+		<name>
+			Manufacturing company gets custom Power BI dashboards to make better decisions on task and resource allocation
+		</name>
+		<url>https://www.beyondintranet.com/pdf/power-bi-dashboards-for-resource-management.pdf</url>
+		<tags>
+			<tagname>Power BI</tagname>
+			<tagname>Manufacturing</tagname>
+		</tags>
+	</item>
+	<item>
+		<name>
+			European consultancy firm adopted Microsoft Teams to improve team collaborations across multiple touchpoints
+		</name>
+		<url>https://www.beyondintranet.com/pdf/microsoft-teams-to-improve-teams-collaboration.pdf</url>
+		<tags>
+			<tagname>MS Teams</tagname>
+			<tagname>Services</tagname>
+		</tags>
+	</item>
+	<item>
+		<name>
+			Advisory Company Leverages the Benefits of SharePoint Cloud by Successful Migration from Older SharePoint Version
+		</name>
+		<url>https://www.beyondintranet.com/pdf/migrationSharePoint.pdf</url>
+		<tags>
+			<tagname>SharePoint Migration</tagname>
+			<tagname>Services</tagname>
+		</tags>
+	</item>
+	<item>
+		<name>
+			Africa’s leading staffing company leverages SharePoint Document management system to organize its key company information and improve employee’s productivity
+		</name>
+		<url>https://www.beyondintranet.com/pdf/dms-casestudy.pdf</url>
+		<tags>
+			<tagname>Document Management</tagname>
+			<tagname>Services</tagname>
+		</tags>
+	</item>
+	<item>
+		<name>
+			Streamlining HRIS for a Texas-based manufacturing giant using Employee Directory
+		</name>
+		<url>https://www.beyondintranet.com/pdf/employee-directory.pdf</url>
+		<tags>
+			<tagname>Employee Directory</tagname>
+			<tagname>Manufacturing</tagname>
+		</tags>
+	</item>
+	<item>
+		<name>
+			Leading shipping company adopts a SharePoint based bid management platform to automate the process
+		</name>
+		<url>https://www.beyondintranet.com/pdf/Bid-Management.pdf</url>
+		<tags>
+			<tagname>SharePoint</tagname>
+			<tagname>Marine</tagname>
+			<tagname>Bid Management</tagname>
+		</tags>
+	</item>
+	<item>
+		<name>
+			Australian NGO leverages Microsoft Power Platform to streamline kids’ attendance system to manage their safety and wellness
+		</name>
+		<url>https://www.beyondintranet.com/pdf/ngo.pdf</url>
+		<tags>
+			<tagname>PowerApps</tagname>
+			<tagname>NPO</tagname>
+		</tags>
+	</item>
+	<item>
+		<name>
+			Healthcare agency streamline hospital nurse staffing process with SharePoint onboarding solution.
+		</name>
+		<url>https://www.beyondintranet.com/pdf/NurseOnboarding.pdf</url>
+		<tags>
+			<tagname>Employee Onboarding</tagname>
+			<tagname>Healthcare</tagname>
+		</tags>
+	</item>
+	<item>
+		<name>
+			Online university simplifies and speeds up student onboarding process with SharePoint onboarding solution
+		</name>
+		<url>https://www.beyondintranet.com/pdf/studentOnboarding.pdf</url>
+		<tags>
+			<tagname>Employee Onboarding</tagname>
+			<tagname>Education</tagname>
+		</tags>
+	</item>
+	<item>
+		<name>
+			Automated Case and Attorney Allocation System for a Large Non-profit
+		</name>
+		<url>https://www.beyondintranet.com/pdf/npo.pdf</url>
+		<tags>
+			<tagname>SharePoint</tagname>
+			<tagname>Legal</tagname>
+			<tagname>NPO</tagname>
+		</tags>
+	</item>
+	<item>
+		<name>
+			Developed efficient SharePoint Intranet and workflows for an American Electronic giant to simplify its business processes, improve internal communication and customer experience.
+		</name>
+		<url>https://www.beyondintranet.com/pdf/qsc.pdf</url>
+		<tags>
+			<tagname>SharePoint</tagname>
+			<tagname>Manufacturing</tagname>
+		</tags>
+	</item>
+	<item>
+		<name>
+			Communication expert Freuds leverages SharePoint to automate and simplify Contract Management System for their legal team
+		</name>
+		<url>https://www.beyondintranet.com/pdf/freuds.pdf</url>
+		<tags>
+			<tagname>SharePoint</tagname>
+			<tagname>Communication</tagname>
+		</tags>
+	</item>
+	<item>
+		<name>
+			Knowledge Management for Healthcare Industry
+		</name>
+		<url>https://www.beyondintranet.com/pdf/healthcareKM.pdf</url>
+		<tags>
+			<tagname>Knowledge Management</tagname>
+			<tagname>Healthcare</tagname>
+		</tags>
+	</item>
+	<item>
+		<name>
+			Using Knowledge Management add-in as a Sales and Customer Support Backbone for Automotive Industry
+		</name>
+		<url>https://www.beyondintranet.com/pdf/transtar.pdf</url>
+		<tags>
+			<tagname>Knowledge Management</tagname>
+			<tagname>Automotive</tagname>
 		</tags>
 	</item>
 	<!-- Add other items here -->

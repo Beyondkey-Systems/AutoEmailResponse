@@ -12,6 +12,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Microsoft.Extensions.Configuration;
 using System.Net.Mail;
+using BusinessLayer;
+using Microsoft.Extensions.Hosting;
 
 namespace EmailResponseApi.Controllers
 {
@@ -27,16 +29,32 @@ namespace EmailResponseApi.Controllers
     public class EmailResponseController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public EmailResponseController(IConfiguration configuration)
+        private readonly IWebHostEnvironment _environment;
+
+        public EmailResponseController(IWebHostEnvironment environment, IConfiguration configuration)
         {
+            _environment = environment;
             _configuration = configuration;
         }
+        
+       
         [HttpGet("GenerateResponse")]
         public async Task<CustomResponse> GenerateResponse(string inputText, string WebsiteURL, string FullName)
         {
             try
             {
-                // Remove additional white spaces from the input text
+                EmailResponseHandler emailResponseHandler = new EmailResponseHandler();
+                string relativeFilePath = "DB/CaseStudy.xml";
+                // Get the content root path of your application
+                string contentRootPath = _environment.ContentRootPath;
+
+                // Combine the content root path with the relative file path
+                string physicalFilePath = Path.Combine(contentRootPath, relativeFilePath);
+
+
+                List<string> keywords = new List<string> { "Conglomerate", "Organization" };
+                string xmlContent = System.IO.File.ReadAllText(physicalFilePath);
+                string Url =emailResponseHandler.SearchKeywordsInCaseStudyXML(keywords, xmlContent);
                 inputText = "Name: " + FullName + "|" + Regex.Replace(inputText, @"\s+", " ").Trim();
                 string formattedText = $"Text: \"\"\"\n{inputText}\n\"\"\"";
 
@@ -120,45 +138,12 @@ namespace EmailResponseApi.Controllers
             }
             catch (Exception ex)
             {
-                SendErrorEmail(ex, WebsiteURL, inputText);
+                BusinessLayer.ErrorHandler.SendErrorEmail(_configuration, ex, WebsiteURL, inputText);
                 return new CustomResponse
                 {
                     StatusCode = HttpStatusCode.InternalServerError,
                     Content = "An error occurred while processing the request."
                 };
-            }
-        }
-
-
-
-        private void SendErrorEmail(Exception exception, string WebsiteURL, string inputText)
-        {
-            try
-            {
-                // Gmail SMTP settings
-                var smtpClient = new SmtpClient("smtp.gmail.com")
-                {
-                    Port = 587,
-                    Credentials = new NetworkCredential(_configuration["FromEmail"], _configuration["EmailPassword"]),
-                    EnableSsl = true,
-                    UseDefaultCredentials = false,
-                };
-
-                var mailMessage = new MailMessage
-                {
-                    From = new MailAddress(_configuration["FromEmail"]),
-                    Subject = "Error occurred at " + WebsiteURL + " auto email responder API",
-                    Body = exception.Message + "\n" + exception.StackTrace + "\n" + "Question Asked: " + inputText, // Error stack trace
-                };
-
-                mailMessage.To.Add(_configuration["ReceiverEmail"]);
-
-                smtpClient.Send(mailMessage);
-            }
-            catch (Exception ex)
-            {
-                // Handle any exceptions that occur during email sending, e.g., log them
-                Console.WriteLine("Error sending email: " + ex.Message);
             }
         }
     }

@@ -13,6 +13,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BusinessLayer\BusinessLayer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="Controllers\EmailResponseController.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
