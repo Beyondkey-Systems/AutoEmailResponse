@@ -14,6 +14,8 @@ using Microsoft.Extensions.Configuration;
 using System.Net.Mail;
 using BusinessLayer;
 using Microsoft.Extensions.Hosting;
+using System;
+
 
 namespace EmailResponseApi.Controllers
 {
@@ -39,22 +41,15 @@ namespace EmailResponseApi.Controllers
         
        
         [HttpGet("GenerateResponse")]
-        public async Task<CustomResponse> GenerateResponse(string inputText, string WebsiteURL, string FullName)
+        public async Task<CustomResponse> GenerateResponse(string inputText, string WebsiteURL, string FullName,string Email)
         {
             try
             {
-                EmailResponseHandler emailResponseHandler = new EmailResponseHandler();
-                string relativeFilePath = "DB/CaseStudy.xml";
-                // Get the content root path of your application
-                string contentRootPath = _environment.ContentRootPath;
+                string Domain= EmailResponseHandler.GetDomainFromEmail(Email);
 
-                // Combine the content root path with the relative file path
-                string physicalFilePath = Path.Combine(contentRootPath, relativeFilePath);
-
-
-                List<string> keywords = new List<string> { "Conglomerate", "Organization" };
-                string xmlContent = System.IO.File.ReadAllText(physicalFilePath);
-                string Url =emailResponseHandler.SearchKeywordsInCaseStudyXML(keywords, xmlContent);
+                List<string> keywords = new List<string> { "SharePoint", "Power Automate", "Manufacturing", "Software","OCR" };
+                string CaseStudyFile= GetCaseStudy(keywords);
+                
                 inputText = "Name: " + FullName + "|" + Regex.Replace(inputText, @"\s+", " ").Trim();
                 string formattedText = $"Text: \"\"\"\n{inputText}\n\"\"\"";
 
@@ -145,6 +140,21 @@ namespace EmailResponseApi.Controllers
                     Content = "An error occurred while processing the request."
                 };
             }
+        }
+        private string GetCaseStudy(List<string> Keywords)
+        {
+            EmailResponseHandler emailResponseHandler = new EmailResponseHandler();
+            string relativeFilePath = "DB/CaseStudy.xml";
+            // Get the content root path of your application
+            string contentRootPath = _environment.ContentRootPath;
+
+            // Combine the content root path with the relative file path
+            string physicalFilePath = Path.Combine(contentRootPath, relativeFilePath);
+
+            
+            string xmlContent = System.IO.File.ReadAllText(physicalFilePath);
+            string Url = emailResponseHandler.SearchKeywordsInCaseStudyXML(Keywords, xmlContent);
+            return Url;
         }
     }
 }
