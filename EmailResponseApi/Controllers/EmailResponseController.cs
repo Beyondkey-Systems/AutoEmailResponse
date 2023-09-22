@@ -15,6 +15,7 @@ using System.Net.Mail;
 using BusinessLayer;
 using Microsoft.Extensions.Hosting;
 using System;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 
 
 namespace EmailResponseApi.Controllers
@@ -38,22 +39,26 @@ namespace EmailResponseApi.Controllers
             _environment = environment;
             _configuration = configuration;
         }
-        
-       
+
+
         [HttpGet("GenerateResponse")]
-        public async Task<CustomResponse> GenerateResponse(string inputText, string WebsiteURL, string FullName,string Email)
+        public async Task<CustomResponse> GenerateResponse(string inputText, string WebsiteURL, string FullName, string Email)
         {
             try
             {
-                string Domain= EmailResponseHandler.GetDomainFromEmail(Email);
+                var apiKey = _configuration["apiKey"];
 
-                List<string> keywords = new List<string> { "SharePoint", "Power Automate", "Manufacturing", "Software","OCR" };
-                string CaseStudyFile= GetCaseStudy(keywords);
-                
+                string Domain = EmailResponseHandler.GetDomainFromEmail(Email);
+                var Domainkeywords= await EmailResponseHandler.ExtractKeywordsfromDomain(apiKey, Domain);
+                var UserQueryKeywords = await EmailResponseHandler.ExtractKeywordsfromUserQuery(apiKey, inputText);
+                var FinalKeywords=UserQueryKeywords.Concat(Domainkeywords).ToList();
+
+                string CaseStudyFile = GetCaseStudy(FinalKeywords);
+
                 inputText = "Name: " + FullName + "|" + Regex.Replace(inputText, @"\s+", " ").Trim();
                 string formattedText = $"Text: \"\"\"\n{inputText}\n\"\"\"";
 
-                var apiKey = _configuration["apiKey"];
+
                 var endpoint = "https://api.openai.com/v1/chat/completions";
 
                 using (var client = new HttpClient())
@@ -151,10 +156,13 @@ namespace EmailResponseApi.Controllers
             // Combine the content root path with the relative file path
             string physicalFilePath = Path.Combine(contentRootPath, relativeFilePath);
 
-            
+
             string xmlContent = System.IO.File.ReadAllText(physicalFilePath);
             string Url = emailResponseHandler.SearchKeywordsInCaseStudyXML(Keywords, xmlContent);
             return Url;
         }
+       
+       
+
     }
 }
