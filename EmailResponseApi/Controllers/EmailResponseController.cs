@@ -49,9 +49,9 @@ namespace EmailResponseApi.Controllers
                 var apiKey = _configuration["apiKey"];
 
                 string Domain = EmailResponseHandler.GetDomainFromEmail(Email);
-                var Domainkeywords= await EmailResponseHandler.ExtractKeywordsfromDomain(apiKey, Domain);
+                var Domainkeywords = await EmailResponseHandler.ExtractKeywordsfromDomain(apiKey, Domain);
                 var UserQueryKeywords = await EmailResponseHandler.ExtractKeywordsfromUserQuery(apiKey, inputText);
-                var FinalKeywords=UserQueryKeywords.Concat(Domainkeywords).ToList();
+                var FinalKeywords = UserQueryKeywords.Concat(Domainkeywords).ToList();
 
                 string CaseStudyFile = GetCaseStudy(FinalKeywords);
 
@@ -77,6 +77,9 @@ namespace EmailResponseApi.Controllers
                             customInstruction += $"You can learn more about '{product.Key}' here: {product.Value}|";
                         }
                         customInstruction += _configuration["CustomInstructionBeyondIntranet2"];
+                        if (!string.IsNullOrEmpty(CaseStudyFile))
+                            customInstruction += $"Should always suggest to take a moment to review relevant <a href= '{CaseStudyFile}'>case study</a>. ";
+                        customInstruction += _configuration["CustomInstructionBeyondIntranet3"];
                         customInstruction += _configuration["SampleResponse1"];
                         customInstruction += _configuration["SampleResponse2"];
                     }
@@ -161,8 +164,6 @@ namespace EmailResponseApi.Controllers
             string Url = emailResponseHandler.SearchKeywordsInCaseStudyXML(Keywords, xmlContent);
             return Url;
         }
-       
-       
 
     }
 }

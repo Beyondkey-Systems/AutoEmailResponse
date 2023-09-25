@@ -117,7 +117,7 @@ namespace BusinessLayer
             var openAiApi = new OpenAI_API.OpenAIAPI(apiKey);
 
             // Input text from which to extract keywords
-            string customInstruction = $"You are a language model, understand the core business of domain: {Domain} and based on core business, extract only 5 keywords. do not share any additional information";
+            string customInstruction = $"You are a language model, understand the core business of domain: {Domain} and based on core business, extract only 1 keywords. do not share any additional information";
 
             try
             {
