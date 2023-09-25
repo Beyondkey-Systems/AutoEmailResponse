@@ -12,52 +12,54 @@ using Newtonsoft.Json;
 using OpenAI_API;
 using OpenAI_API.Chat;
 using OpenAI_API.Completions;
+using System.Text.RegularExpressions;
 
 namespace BusinessLayer
 {
     public class EmailResponseHandler
     {
 
-        public string SearchKeywordsInCaseStudyXML(List<string> keywords, string xmlContent)
+        public List<string> SearchKeywordsInCaseStudyXML(List<string> keywords, string xmlContent)
         {
-            try
+
+            // Load the XML content into an XDocument
+            XDocument xdoc = XDocument.Parse(xmlContent);
+
+            // Initialize variables to keep track of the maximum matches and the corresponding URL
+            int maxMatches = 0;
+            List<string> matchedUrl = new List<string> ();
+
+            // Iterate through each item in the XML
+            foreach (var item in xdoc.Descendants("item"))
             {
-                // Load the XML content into an XDocument
-                XDocument xdoc = XDocument.Parse(xmlContent);
+                string name = item.Element("name")?.Value ?? "";
+                IEnumerable<string> tags = item.Descendants("tagname").Select(tag => tag.Value);
 
-                // Initialize variables to keep track of the maximum matches and the corresponding URL
-                int maxMatches = 0;
-                string matchedUrl = null;
+                // Combine the name and tags into a single text for keyword search
+                string combinedText = name + " " + string.Join(" ", tags);
 
-                // Iterate through each item in the XML
-                foreach (var item in xdoc.Descendants("item"))
+                // Count the number of matched keywords for this item
+                //int matches = keywords.Count(keyword =>
+                //    combinedText.Contains(keyword, StringComparison.OrdinalIgnoreCase));
+
+                int matches = keywords.Sum(keyword =>
+                Regex.Matches(combinedText, @"\b" + Regex.Escape(keyword) + @"\b", RegexOptions.IgnoreCase).Count);
+
+
+                if (matches > 0 && matches == maxMatches)
                 {
-                    string name = item.Element("name")?.Value ?? "";
-                    IEnumerable<string> tags = item.Descendants("tagname").Select(tag => tag.Value);
-
-                    // Combine the name and tags into a single text for keyword search
-                    string combinedText = name + " " + string.Join(" ", tags);
-
-                    // Count the number of matched keywords for this item
-                    int matches = keywords.Count(keyword =>
-                        combinedText.Contains(keyword, StringComparison.OrdinalIgnoreCase));
-
-                    // If the current item has more matches than the previous maximum, update the maximum matches and URL
-                    if (matches > maxMatches)
-                    {
-                        maxMatches = matches;
-                        matchedUrl = item.Element("url")?.Value;
-                    }
+                    matchedUrl.Add(item.Element("url")?.Value);
                 }
+                if (matches > maxMatches)
+                {
+                    matchedUrl.Clear();
+                    maxMatches = matches;
+                    matchedUrl.Add(item.Element("url")?.Value);
+                }
+               
+            }
 
-                return matchedUrl;
-            }
-            catch (Exception ex)
-            {
-                // Handle any exceptions that occur during XML parsing or keyword search
-                Console.WriteLine("Error searching keywords in XML: " + ex.Message);
-                return null;
-            }
+            return matchedUrl;
         }
         public static string GetDomainFromEmail(string email)
         {

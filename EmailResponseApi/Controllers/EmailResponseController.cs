@@ -48,13 +48,6 @@ namespace EmailResponseApi.Controllers
             {
                 var apiKey = _configuration["apiKey"];
 
-                string Domain = EmailResponseHandler.GetDomainFromEmail(Email);
-                var Domainkeywords = await EmailResponseHandler.ExtractKeywordsfromDomain(apiKey, Domain);
-                var UserQueryKeywords = await EmailResponseHandler.ExtractKeywordsfromUserQuery(apiKey, inputText);
-                var FinalKeywords = UserQueryKeywords.Concat(Domainkeywords).ToList();
-
-                string CaseStudyFile = GetCaseStudy(FinalKeywords);
-
                 inputText = "Name: " + FullName + "|" + Regex.Replace(inputText, @"\s+", " ").Trim();
                 string formattedText = $"Text: \"\"\"\n{inputText}\n\"\"\"";
 
@@ -69,6 +62,15 @@ namespace EmailResponseApi.Controllers
                     var customInstruction = string.Empty;
                     if (WebsiteURL.Trim().Contains("beyondintranet"))
                     {
+                        string Domain = EmailResponseHandler.GetDomainFromEmail(Email);
+                        var Domainkeywords = await EmailResponseHandler.ExtractKeywordsfromDomain(apiKey, Domain);
+                        var UserQueryKeywords = await EmailResponseHandler.ExtractKeywordsfromUserQuery(apiKey, inputText);
+                        // Remove leading and trailing whitespace from Domainkeywords and UserQueryKeywords
+                        Domainkeywords = Domainkeywords.Select(keyword => keyword.Trim()).ToList();
+                        UserQueryKeywords = UserQueryKeywords.Select(keyword => keyword.Trim()).ToList();
+                        var FinalKeywords = UserQueryKeywords.Concat(Domainkeywords).ToList();
+
+                        var CaseStudyFiles = GetCaseStudy(FinalKeywords);
                         customInstruction = _configuration["CustomInstructionBeyondIntranet1"] + " ";
                         customInstruction += "For 'Product' inquiries, i can be asked about specific products like 'HR Directory,' 'Organizational Chart,' etc or similar kind of products., and I'll provide relevant links as specified here. ";
                         var products = _configuration.GetSection("BeyondIntranetProducts");
@@ -77,8 +79,10 @@ namespace EmailResponseApi.Controllers
                             customInstruction += $"You can learn more about '{product.Key}' here: {product.Value}|";
                         }
                         customInstruction += _configuration["CustomInstructionBeyondIntranet2"];
-                        if (!string.IsNullOrEmpty(CaseStudyFile))
-                            customInstruction += $"Should always suggest to take a moment to review relevant <a href= '{CaseStudyFile}'>case study</a>. ";
+                        if (CaseStudyFiles.Count==1)
+                            customInstruction += $"Should always suggest to take a moment to review relevant <a href= '{CaseStudyFiles[0].ToString()}'>case study</a>. ";
+                        if (CaseStudyFiles.Count > 1)
+                            customInstruction += $"Should always suggest to take a moment to review our case studies <a href= 'https://www.beyondintranet.com/customer-stories'>here</a>. ";
                         customInstruction += _configuration["CustomInstructionBeyondIntranet3"];
                         customInstruction += _configuration["SampleResponse1"];
                         customInstruction += _configuration["SampleResponse2"];
@@ -149,7 +153,7 @@ namespace EmailResponseApi.Controllers
                 };
             }
         }
-        private string GetCaseStudy(List<string> Keywords)
+        private List<string> GetCaseStudy(List<string> Keywords)
         {
             EmailResponseHandler emailResponseHandler = new EmailResponseHandler();
             string relativeFilePath = "DB/CaseStudy.xml";
@@ -161,7 +165,7 @@ namespace EmailResponseApi.Controllers
 
 
             string xmlContent = System.IO.File.ReadAllText(physicalFilePath);
-            string Url = emailResponseHandler.SearchKeywordsInCaseStudyXML(Keywords, xmlContent);
+            var Url = emailResponseHandler.SearchKeywordsInCaseStudyXML(Keywords, xmlContent);
             return Url;
         }
 
