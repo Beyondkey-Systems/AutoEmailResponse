@@ -139,7 +139,7 @@ namespace EmailResponseApi.Controllers
                         StatusCode = response.StatusCode,
                         Content = finalResponse
                     };
-
+                    SendEmail(customResponse);
                     return customResponse;
                 }
             }
@@ -169,5 +169,55 @@ namespace EmailResponseApi.Controllers
             return Url;
         }
 
+        private void SendEmail(CustomResponse customResponse)
+        {
+            try
+            {
+                // Deserialize the JSON response into a JObject
+                JObject responseObject = JObject.Parse(customResponse.Content);
+
+                // Access the "choices" array from the JObject
+                JArray choicesArray = responseObject["choices"] as JArray;
+
+                if (choicesArray != null && choicesArray.Any())
+                {
+                    // Access the first item in the "choices" array (index 0)
+                    JObject firstChoice = choicesArray[0] as JObject;
+
+                    if (firstChoice != null)
+                    {
+                        // Access the "content" field from the first choice
+                        string content = firstChoice["message"]["content"].ToString();
+
+                        // Gmail SMTP settings
+                        var smtpClient = new SmtpClient("smtp.gmail.com")
+                        {
+                            Port = 587,
+                            Credentials = new NetworkCredential(_configuration["FromEmail"], _configuration["EmailPassword"]),
+                            EnableSsl = true,
+                            UseDefaultCredentials = false,
+                        };
+
+                        var mailMessage = new MailMessage
+                        {
+                            From = new MailAddress(_configuration["FromEmail"]),
+                            Subject = "internal testing - BeyondIntranet Contact us Auto Email Response",
+                            Body = content, 
+                            IsBodyHtml = true
+                        };
+
+                        mailMessage.To.Add(_configuration["ReceiverEmail"]);
+
+                        smtpClient.Send(mailMessage);
+                    }
+                }
+               
+            }
+            catch (Exception ex)
+            {
+                // Handle any exceptions that occur during email sending, e.g., log them
+                Console.WriteLine("Error sending email: " + ex.Message);
+            }
+        }
     }
 }
