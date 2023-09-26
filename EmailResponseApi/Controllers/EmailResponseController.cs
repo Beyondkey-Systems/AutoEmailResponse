@@ -80,7 +80,7 @@ namespace EmailResponseApi.Controllers
                         }
                         customInstruction += _configuration["CustomInstructionBeyondIntranet2"];
                         if (CaseStudyFiles.Count==1)
-                            customInstruction += $"Should always suggest to take a moment to review relevant <a href= '{CaseStudyFiles[0].ToString()}'>case study</a>. ";
+                            customInstruction += $"Should always suggest to take a moment to review relevant <a href= '{CaseStudyFiles[0]}'>case study</a>. ";
                         if (CaseStudyFiles.Count > 1)
                             customInstruction += $"Should always suggest to take a moment to review our case studies <a href= 'https://www.beyondintranet.com/customer-stories'>here</a>. ";
                         customInstruction += _configuration["CustomInstructionBeyondIntranet3"];
