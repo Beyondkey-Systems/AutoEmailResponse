@@ -21,46 +21,67 @@ namespace BusinessLayer
 
         public List<string> SearchKeywordsInCaseStudyXML(List<string> keywords, string xmlContent)
         {
-
-            // Load the XML content into an XDocument
             XDocument xdoc = XDocument.Parse(xmlContent);
-
-            // Initialize variables to keep track of the maximum matches and the corresponding URL
             int maxMatches = 0;
-            List<string> matchedUrl = new List<string> ();
+            List<string> matchedUrl = new List<string>();
 
-            // Iterate through each item in the XML
+            // First, search in <ptags>
             foreach (var item in xdoc.Descendants("item"))
             {
-                string name = item.Element("name")?.Value ?? "";
-                IEnumerable<string> tags = item.Descendants("tagname").Select(tag => tag.Value);
-
-                // Combine the name and tags into a single text for keyword search
-                string combinedText = name + " " + string.Join(" ", tags);
-
-                // Count the number of matched keywords for this item
-                //int matches = keywords.Count(keyword =>
-                //    combinedText.Contains(keyword, StringComparison.OrdinalIgnoreCase));
+                IEnumerable<string> tags = item.Descendants("ptags").Descendants("tagname").Select(tag => tag.Value);
+                string combinedText = string.Join(" ", tags);
 
                 int matches = keywords.Sum(keyword =>
-                Regex.Matches(combinedText, @"\b" + Regex.Escape(keyword) + @"\b", RegexOptions.IgnoreCase).Count);
+                    Regex.Matches(combinedText, @"\b" + Regex.Escape(keyword) + @"\b", RegexOptions.IgnoreCase).Count);
 
-
-                if (matches > 0 && matches == maxMatches)
-                {
-                    matchedUrl.Add(item.Element("url")?.Value);
-                }
                 if (matches > maxMatches)
                 {
                     matchedUrl.Clear();
                     maxMatches = matches;
                     matchedUrl.Add(item.Element("url")?.Value);
                 }
-               
+            }
+
+            if (matchedUrl.Count > 0) return matchedUrl; // If URL found in ptags, return it
+
+            // Next, search in <name>
+            foreach (var item in xdoc.Descendants("item"))
+            {
+                string name = item.Element("name")?.Value ?? "";
+
+                int matches = keywords.Sum(keyword =>
+                    Regex.Matches(name, @"\b" + Regex.Escape(keyword) + @"\b", RegexOptions.IgnoreCase).Count);
+
+                if (matches > maxMatches)
+                {
+                    matchedUrl.Clear();
+                    maxMatches = matches;
+                    matchedUrl.Add(item.Element("url")?.Value);
+                }
+            }
+
+            if (matchedUrl.Count > 0) return matchedUrl; // If URL found in name, return it
+
+            // Finally, search in <tags>
+            foreach (var item in xdoc.Descendants("item"))
+            {
+                IEnumerable<string> tags = item.Descendants("tags").Descendants("tagname").Select(tag => tag.Value);
+                string combinedText = string.Join(" ", tags);
+
+                int matches = keywords.Sum(keyword =>
+                    Regex.Matches(combinedText, @"\b" + Regex.Escape(keyword) + @"\b", RegexOptions.IgnoreCase).Count);
+
+                if (matches > maxMatches)
+                {
+                    matchedUrl.Clear();
+                    maxMatches = matches;
+                    matchedUrl.Add(item.Element("url")?.Value);
+                }
             }
 
             return matchedUrl;
         }
+
         public static string GetDomainFromEmail(string email)
         {
             if (string.IsNullOrWhiteSpace(email))
