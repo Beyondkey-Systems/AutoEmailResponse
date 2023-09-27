@@ -58,19 +58,18 @@ namespace EmailResponseApi.Controllers
                 {
                     var request = new HttpRequestMessage(HttpMethod.Post, endpoint);
                     request.Headers.Add("Authorization", $"Bearer {apiKey}");
-
+                    List<string> CaseStudyFiles = new List<string>();
                     var customInstruction = string.Empty;
                     if (WebsiteURL.Trim().Contains("beyondintranet"))
                     {
                         string Domain = EmailResponseHandler.GetDomainFromEmail(Email);
                         var Domainkeywords = await EmailResponseHandler.ExtractKeywordsfromDomain(apiKey, Domain);
                         var UserQueryKeywords = await EmailResponseHandler.ExtractKeywordsfromUserQuery(apiKey, inputText);
-                        // Remove leading and trailing whitespace from Domainkeywords and UserQueryKeywords
                         Domainkeywords = Domainkeywords.Select(keyword => keyword.Trim()).ToList();
                         UserQueryKeywords = UserQueryKeywords.Select(keyword => keyword.Trim()).ToList();
                         var FinalKeywords = UserQueryKeywords.Concat(Domainkeywords).ToList();
 
-                        var CaseStudyFiles = GetCaseStudy(FinalKeywords);
+                        CaseStudyFiles = GetCaseStudy(FinalKeywords);
                         customInstruction = _configuration["CustomInstructionBeyondIntranet1"] + " ";
                         customInstruction += "For 'Product' inquiries, i can be asked about specific products like 'HR Directory,' 'Organizational Chart,' etc or similar kind of products., and I'll provide relevant links as specified here. ";
                         var products = _configuration.GetSection("BeyondIntranetProducts");
@@ -79,10 +78,11 @@ namespace EmailResponseApi.Controllers
                             customInstruction += $"You can learn more about '{product.Key}' here: {product.Value}|";
                         }
                         customInstruction += _configuration["CustomInstructionBeyondIntranet2"];
-                        if (CaseStudyFiles.Count==1)
-                            customInstruction += $"Should always suggest to take a moment to review relevant <a href= '{CaseStudyFiles[0]}'>case study</a>. ";
+                        if (CaseStudyFiles.Count == 1)
+                            customInstruction += $"Should always force to take a moment to review relevant case study.";
+                        //customInstruction += $"Should always suggest to take a moment to review relevant <a href= '{CaseStudyFiles[0]}'>case study</a>. ";
                         if (CaseStudyFiles.Count > 1)
-                            customInstruction += $"Should always suggest to take a moment to review our case studies <a href= 'https://www.beyondintranet.com/customer-stories'>here</a>. ";
+                            customInstruction += $"Should always suggest to take a moment to review our case studies. ";
                         customInstruction += _configuration["CustomInstructionBeyondIntranet3"];
                         customInstruction += _configuration["SampleResponse1"];
                         customInstruction += _configuration["SampleResponse2"];
@@ -126,8 +126,17 @@ namespace EmailResponseApi.Controllers
                         var firstChoice = choicesArray[0] as JObject;
                         if (firstChoice != null)
                         {
-                            firstChoice["message"]["content"] = _configuration["DisplayPoweredByBKChatbot"] == "True" ? $"{firstChoice["message"]["content"]} \n[Powered by Beyond Key Chatbot]" : $"{firstChoice["message"]["content"]}";
+                            var content = firstChoice["message"]["content"].ToString();
+                            if (WebsiteURL.Trim().Contains("beyondintranet"))
+                            {
+                                if (CaseStudyFiles.Count ==1 )
+                                    content = Regex.Replace(content, @"(<case study>|case study|casestudy)", $"<a href='{CaseStudyFiles[0]}'>$1</a>", RegexOptions.IgnoreCase);
+                                else
+                                    content = Regex.Replace(content, @"(case studies|casestudies|case-studies)", "<a href='https://www.beyondintranet.com/customer-stories'>$1</a>", RegexOptions.IgnoreCase);
+                            }
+                            firstChoice["message"]["content"] = _configuration["DisplayPoweredByBKChatbot"] == "True" ? $"{content} <br/><br/>[Powered by Beyond Key Chatbot]" : $"{content}";
                             firstChoice["message"]["content"] = firstChoice["message"]["content"].ToString().Replace("\n", "<br/>");
+
                         }
                     }
 
@@ -139,7 +148,7 @@ namespace EmailResponseApi.Controllers
                         StatusCode = response.StatusCode,
                         Content = finalResponse
                     };
-                    SendEmail(customResponse);
+                     SendEmail(customResponse);
                     return customResponse;
                 }
             }
@@ -202,7 +211,7 @@ namespace EmailResponseApi.Controllers
                         {
                             From = new MailAddress(_configuration["FromEmail"]),
                             Subject = "internal testing - BeyondIntranet Contact us Auto Email Response",
-                            Body = content, 
+                            Body = content,
                             IsBodyHtml = true
                         };
 
@@ -211,7 +220,7 @@ namespace EmailResponseApi.Controllers
                         smtpClient.Send(mailMessage);
                     }
                 }
-               
+
             }
             catch (Exception ex)
             {
