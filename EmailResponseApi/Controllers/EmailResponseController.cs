@@ -113,7 +113,7 @@ namespace EmailResponseApi.Controllers
                     }
 
                     string[] ignoreKeywords = _configuration.GetSection("IgnoreKeywords").Get<string[]>();
-                    string pattern = "(" + string.Join("|", ignoreKeywords.Select(kw => Regex.Escape(kw))) + "),";
+                    string pattern = "(" + string.Join("|", ignoreKeywords.Select(kw => Regex.Escape(kw))) + ")";
 
                     string finalResponse = Regex.Replace(responseContent, pattern, "", RegexOptions.IgnoreCase);
                     var jsonResponse = JObject.Parse(finalResponse);
@@ -129,10 +129,10 @@ namespace EmailResponseApi.Controllers
                             var content = firstChoice["message"]["content"].ToString();
                             if (WebsiteURL.Trim().Contains("beyondintranet"))
                             {
-                                if (CaseStudyFiles.Count ==1 )
+                                if (CaseStudyFiles.Count == 1)
                                     content = Regex.Replace(content, @"(<case study>|case study|casestudy)", $"<a href='{CaseStudyFiles[0]}'>$1</a>", RegexOptions.IgnoreCase);
-                                else
-                                    content = Regex.Replace(content, @"(case studies|casestudies|case-studies)", "<a href='https://www.beyondintranet.com/customer-stories'>$1</a>", RegexOptions.IgnoreCase);
+                                
+                                content = Regex.Replace(content, @"(case studies|casestudies|case-studies)", "<a href='https://www.beyondintranet.com/customer-stories'>$1</a>", RegexOptions.IgnoreCase);
                             }
                             firstChoice["message"]["content"] = _configuration["DisplayPoweredByBKChatbot"] == "True" ? $"{content} <br/><br/>[Powered by Beyond Key Chatbot]" : $"{content}";
                             firstChoice["message"]["content"] = firstChoice["message"]["content"].ToString().Replace("\n", "<br/>");
@@ -148,7 +148,7 @@ namespace EmailResponseApi.Controllers
                         StatusCode = response.StatusCode,
                         Content = finalResponse
                     };
-                     SendEmail(customResponse);
+                    SendEmail(customResponse);
                     return customResponse;
                 }
             }

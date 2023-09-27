@@ -15,13 +15,6 @@ namespace ChatGPT.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly HttpClient httpClient;
-
-        public HomeController()
-        {
-
-        }
-
         //public async Task<string> GenerateResponse(string inputtext)
         public async Task<ActionResult> GenerateResponse(string inputtext)
         {
