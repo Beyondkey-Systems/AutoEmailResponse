@@ -49,7 +49,6 @@
 			<tagname>Dashboard</tagname>
 			<tagname>Activity Logs</tagname>
 			<tagname>Security</tagname>
-			<tagname>Email Notifications</tagname>
 			<tagname>Search Options</tagname>
 			<tagname>Data Comparison</tagname>
 			<tagname>Azure SQL</tagname>
@@ -71,7 +70,6 @@
 			<tagname>Valuable Insights</tagname>
 			<tagname>Company</tagname>
 			<tagname>Website</tagname>
-			<tagname>Contact Email</tagname>
 			<tagname>Phone Number</tagname>
 		</tags>
 	</item>
@@ -130,10 +128,8 @@
 			<tagname>Hassle-Free Comparison</tagname>
 			<tagname>Audit and Compliance Management</tagname>
 			<tagname>Awarding/Procuring Line Items</tagname>
-			<tagname>A Company</tagname>
-			<tagname>Website</tagname>
-			<tagname>Contact Email</tagname>
-			<tagname>Phone Number</tagname>
+	
+		
 		</tags>
 	</item>
 	<item>
@@ -241,10 +237,7 @@
 			<tagname>Room Booking App</tagname>
 			<tagname>Manual Workload</tagname>
 			<tagname>Screen Shot</tagname>
-			<tagname>A Company</tagname>
-			<tagname>Website</tagname>
-			<tagname>Contact Email</tagname>
-			<tagname>Phone Number</tagname>
+
 		</tags>
 	</item>
 	<item>
@@ -286,7 +279,7 @@
 			<tagname>Number to Call</tagname>
 			<tagname>Department</tagname>
 			<tagname>Skills and Abilities</tagname>
-			<tagname>Emails</tagname>
+	
 			<tagname>Location</tagname>
 			<tagname>Additional Personal Information</tagname>
 			<tagname>Birthdays</tagname>
@@ -297,7 +290,7 @@
 			<tagname>Birthday and Anniversary Reminder</tagname>
 			<tagname>A Company</tagname>
 			<tagname>Website</tagname>
-			<tagname>Contact Email</tagname>
+			
 			<tagname>Phone Number</tagname>
 			<tagname>Screenshot</tagname>
 			<tagname>Conclusion</tagname>
@@ -347,9 +340,7 @@
 			<tagname>Beyond Intranet</tagname>
 			<tagname>Conclusion</tagname>
 			<tagname>Screen Shots</tagname>
-			<tagname>Website</tagname>
-			<tagname>Contact Email</tagname>
-			<tagname>Phone Number</tagname>
+	
 		</tags>
 	</item>
 	<item>
@@ -407,8 +398,7 @@
 			<tagname>Fast Loading</tagname>
 			<tagname>Technical Dependencies</tagname>
 			<tagname>Website</tagname>
-			<tagname>Contact Email</tagname>
-			<tagname>Phone Number</tagname>
+		
 		</tags>
 	</item>
 	<item>
@@ -533,7 +523,6 @@
 			<tagname>Covid Information Submission Form</tagname>
 			<tagname>Required Stats</tagname>
 			<tagname>Data Collecting and Analysis Automation</tagname>
-			<tagname>Email Notifications</tagname>
 			<tagname>Performance Monitoring</tagname>
 			<tagname>Critical Gadgets</tagname>
 			<tagname>Central Facility</tagname>
@@ -709,7 +698,6 @@
 			<tagname>document processing</tagname>
 			<tagname>document management</tagname>
 			<tagname>file processing</tagname>
-			<tagname>email processing</tagname>
 		</ptags>
 		<tags>
 			<tagname>Power Automate</tagname>
@@ -746,7 +734,6 @@
 			<tagname>files extraction</tagname>
 			<tagname>zip folders</tagname>
 			<tagname>unzipped documents</tagname>
-			<tagname>reminder emails</tagname>
 			<tagname>Our Solution</tagname>
 			<tagname>Beyond Intranet</tagname>
 			<tagname>Microsoft 365 consultants</tagname>
@@ -979,7 +966,6 @@
 			<tagname>approval cycles</tagname>
 			<tagname>reiterations</tagname>
 			<tagname>process</tagname>
-			<tagname>papers and emails</tagname>
 			<tagname>tracking</tagname>
 			<tagname>status</tagname>
 			<tagname>duration</tagname>
@@ -1055,7 +1041,6 @@
 			<tagname>Case Study</tagname>
 			<tagname>Challenges</tagname>
 			<tagname>invoices</tagname>
-			<tagname>email attachments</tagname>
 			<tagname>scanned invoices</tagname>
 			<tagname>approval processes</tagname>
 			<tagname>vendor payment</tagname>
@@ -1074,7 +1059,6 @@
 			<tagname>invoices meta-tagging</tagname>
 			<tagname>SharePoint Online</tagname>
 			<tagname>invoices</tagname>
-			<tagname>email</tagname>
 			<tagname>SharePoint document library</tagname>
 			<tagname>invoice parsing</tagname>
 			<tagname>Vendor Name</tagname>
@@ -1213,7 +1197,6 @@
 			<tagname>data security</tagname>
 			<tagname>workflow</tagname>
 			<tagname>meta data tagging</tagname>
-			<tagname>automated email notifications</tagname>
 			<tagname>customization</tagname>
 			<tagname>document storage</tagname>
 			<tagname>secure system</tagname>
@@ -1286,7 +1269,6 @@
 			<tagname>centralized system</tagname>
 			<tagname>comprehensive ISO 27001 Risk Management tool</tagname>
 			<tagname>subscription package</tagname>
-			<tagname>email notifications</tagname>
 			<tagname>reminders</tagname>
 			<tagname>reporting dashboards</tagname>
 			<tagname>bulk data management</tagname>
@@ -1296,7 +1278,6 @@
 			<tagname>Recurring Action Management Module</tagname>
 			<tagname>Reporting Dashboard Module</tagname>
 			<tagname>Document Management</tagname>
-			<tagname>Email notifications and reminders</tagname>
 			<tagname>Bulk upload/download of Risk and action data</tagname>
 			<tagname>Searching information</tagname>
 			<tagname>results</tagname>
@@ -1691,7 +1672,6 @@
 			<tagname>centralized, digitalized document repository</tagname>
 			<tagname>document submission</tagname>
 			<tagname>team collaboration</tagname>
-			<tagname>email notifications</tagname>
 			<tagname>cost-effective solution</tagname>
 			<tagname>Document Upload</tagname>
 			<tagname>Sharepoint Document Management</tagname>
@@ -1796,7 +1776,6 @@
 			<tagname>cumbersome</tagname>
 			<tagname>unsecured system</tagname>
 			<tagname>paper copies</tagname>
-			<tagname>customizable email invitations</tagname>
 			<tagname>Leading shipping company</tagname>
 			<tagname>MENA region</tagname>
 			<tagname>ships</tagname>
@@ -1819,7 +1798,6 @@
 			<tagname>Type</tagname>
 			<tagname>Add External Users</tagname>
 			<tagname>Bid Document Access</tagname>
-			<tagname>Email Notifications</tagname>
 			<tagname>Bid Evaluation Process</tagname>
 			<tagname>Office 365 user license</tagname>
 			<tagname>bidding process</tagname>
@@ -1936,7 +1914,6 @@
 			<tagname>HR department</tagname>
 			<tagname>important documents</tagname>
 			<tagname>overdue tasks</tagname>
-			<tagname>Automated email notifications</tagname>
 			<tagname>Landing Page</tagname>
 			<tagname>Highly secured document management system</tagname>
 			<tagname>nursing staff retention</tagname>
@@ -2035,7 +2012,6 @@
 			<tagname>lawyer</tagname>
 			<tagname>document management</tagname>
 			<tagname>Automation</tagname>
-			<tagname>email notification</tagname>
 			
 		</ptags>
 		<tags>
@@ -2065,7 +2041,6 @@
 			<tagname>video conferencing</tagname>
 			<tagname>Automated Case and Attorney Allocation System</tagname>
 			<tagname>database</tagname>
-			<tagname>email notifications</tagname>
 			<tagname>document sharing</tagname>
 			<tagname>workflow</tagname>
 			<tagname>SharePoint-based software</tagname>
@@ -2304,7 +2279,6 @@
 			<tagname>bulk uploading</tagname>
 			<tagname>question status</tagname>
 			<tagname>archive K-Assets</tagname>
-			<tagname>email response templates</tagname>
 			<tagname>knowledge sharing process</tagname>
 			<tagname>knowledge assets</tagname>
 			<tagname>Products</tagname>
@@ -2364,7 +2338,6 @@
 			<tagname>Analytics Dashboard</tagname>
 			<tagname>User access permissions</tagname>
 			<tagname>Q and A Status controls</tagname>
-			<tagname>Email response templates</tagname>
 			<tagname>Auto detect user profile language</tagname>
 			<tagname>Single interface for internal team</tagname>
 			<tagname>Customer request categorization</tagname>
