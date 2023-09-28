@@ -62,22 +62,22 @@ namespace BusinessLayer
 
             if (matchedUrl.Count > 0) return matchedUrl; // If URL found in name, return it
 
-            // Finally, search in <tags>
-            foreach (var item in xdoc.Descendants("item"))
-            {
-                IEnumerable<string> tags = item.Descendants("tags").Descendants("tagname").Select(tag => tag.Value);
-                string combinedText = string.Join(" ", tags);
+            //// Finally, search in <tags>
+            //foreach (var item in xdoc.Descendants("item"))
+            //{
+            //    IEnumerable<string> tags = item.Descendants("tags").Descendants("tagname").Select(tag => tag.Value);
+            //    string combinedText = string.Join(" ", tags);
 
-                int matches = keywords.Sum(keyword =>
-                    Regex.Matches(combinedText, @"\b" + Regex.Escape(keyword) + @"\b", RegexOptions.IgnoreCase).Count);
+            //    int matches = keywords.Sum(keyword =>
+            //        Regex.Matches(combinedText, @"\b" + Regex.Escape(keyword) + @"\b", RegexOptions.IgnoreCase).Count);
 
-                if (matches > maxMatches)
-                {
-                    matchedUrl.Clear();
-                    maxMatches = matches;
-                    matchedUrl.Add(item.Element("url")?.Value);
-                }
-            }
+            //    if (matches > maxMatches)
+            //    {
+            //        matchedUrl.Clear();
+            //        maxMatches = matches;
+            //        matchedUrl.Add(item.Element("url")?.Value);
+            //    }
+            //}
 
             return matchedUrl;
         }

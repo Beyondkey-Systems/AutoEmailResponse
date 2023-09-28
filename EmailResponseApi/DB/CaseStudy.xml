@@ -247,6 +247,7 @@
 		<url>https://www.beyondintranet.com/pdf/EmployeeDirectory.pdf</url>
 		<ptags>
 			<tagname>Employee Directory</tagname>
+			<tagname>NPO</tagname>
 		</ptags>
 		<tags>
 			<tagname>Employee Directory Software</tagname>
@@ -307,6 +308,8 @@
 			<tagname>HR-Directory</tagname>
 			<tagname>HR Directory</tagname>
 			<tagname>HR 365 Directory</tagname>
+			<tagname>SharePoint</tagname>
+			<tagname>Manufacturing</tagname>
 		</ptags>
 		<tags>
 			<tagname>SharePoint</tagname>
@@ -469,6 +472,7 @@
 			<tagname>manage inventory</tagname>
 			<tagname>Inventory</tagname>
 			<tagname>Covid situation</tagname>
+			<tagname>Power Automate</tagname>
 		</ptags>
 		<tags>
 			<tagname>SharePoint</tagname>
@@ -2250,6 +2254,7 @@
 			<tagname>Knowledge sharing</tagname>
 			<tagname>Knowledge repository</tagname>
 			<tagname>Knowledge base</tagname>
+			<tagname>KM</tagname>
 		</ptags>
 		<tags>
 			<tagname>Knowledge Management</tagname>
@@ -2306,6 +2311,7 @@
 			<tagname>Knowledge repository</tagname>
 			<tagname>Knowledge bank</tagname>
 			<tagname>Data analytics</tagname>
+			<tagname>KM</tagname>
 		</ptags>
 		<tags>
 			<tagname>Knowledge Management</tagname>
