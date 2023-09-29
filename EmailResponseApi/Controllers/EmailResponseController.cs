@@ -112,11 +112,7 @@ namespace EmailResponseApi.Controllers
                         throw new Exception($"Error calling OpenAI API: {response.StatusCode} - {responseContent}");
                     }
 
-                    string[] ignoreKeywords = _configuration.GetSection("IgnoreKeywords").Get<string[]>();
-                    string pattern = "(" + string.Join("|", ignoreKeywords.Select(kw => Regex.Escape(kw))) + ")";
-
-                    string finalResponse = Regex.Replace(responseContent, pattern, "", RegexOptions.IgnoreCase);
-                    var jsonResponse = JObject.Parse(finalResponse);
+                    var jsonResponse = JObject.Parse(responseContent);
                     // Update the inner "content" field
                     var choicesArray = jsonResponse["choices"] as JArray;
 
@@ -136,19 +132,19 @@ namespace EmailResponseApi.Controllers
                             }
                             content += _configuration["DisplayPoweredByBKChatbot"] == "True"? $" <br/><br/><span style=\"font-size: 10px; font-family: 'Helvetica Neue';\">[Powered by Beyond Key Chatbot]</span>": string.Empty;
                             content += _configuration["DisplayCautionText"] == "True" ? $" <br/><span style=\"font-size: 10px; font-family: 'Helvetica Neue';\">{_configuration["CautionText"]}</span>" : string.Empty;
-                            firstChoice["message"]["content"] = content;
+                            firstChoice["message"]["content"] =RemoveIgnoredKeywords(content);
                             firstChoice["message"]["content"] = firstChoice["message"]["content"].ToString().Replace("\n", "<br/>");
 
                         }
                     }
 
                     // Serialize the updated JSON back to a string
-                    finalResponse = jsonResponse.ToString();
+                    responseContent = jsonResponse.ToString();
 
                     var customResponse = new CustomResponse
                     {
                         StatusCode = response.StatusCode,
-                        Content = finalResponse
+                        Content = responseContent
                     };
                     SendEmail(customResponse);
                     return customResponse;
@@ -163,6 +159,13 @@ namespace EmailResponseApi.Controllers
                     Content = "An error occurred while processing the request."
                 };
             }
+        }
+        private string RemoveIgnoredKeywords(string Content)
+        {
+            string[] ignoreKeywords = _configuration.GetSection("IgnoreKeywords").Get<string[]>();
+            string pattern = "(" + string.Join("|", ignoreKeywords.Select(kw => Regex.Escape(kw))) + ")";
+
+            return Regex.Replace(Content, pattern, "", RegexOptions.IgnoreCase);
         }
         private List<string> GetCaseStudy(List<string> Keywords)
         {
