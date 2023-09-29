@@ -80,7 +80,6 @@ namespace EmailResponseApi.Controllers
                         customInstruction += _configuration["CustomInstructionBeyondIntranet2"];
                         if (CaseStudyFiles.Count == 1)
                             customInstruction += $"Should always force to take a moment to review relevant case study.";
-                        //customInstruction += $"Should always suggest to take a moment to review relevant <a href= '{CaseStudyFiles[0]}'>case study</a>. ";
                         if (CaseStudyFiles.Count > 1)
                             customInstruction += $"Should always suggest to take a moment to review our case studies. ";
                         customInstruction += _configuration["CustomInstructionBeyondIntranet3"];
@@ -132,6 +131,8 @@ namespace EmailResponseApi.Controllers
                             }
                             content += _configuration["DisplayPoweredByBKChatbot"] == "True"? $" <br/><br/><span style=\"font-size: 10px; font-family: 'Helvetica Neue';\">[Powered by Beyond Key Chatbot]</span>": string.Empty;
                             content += _configuration["DisplayCautionText"] == "True" ? $" <br/><span style=\"font-size: 10px; font-family: 'Helvetica Neue';\">{_configuration["CautionText"]}</span>" : string.Empty;
+                            content = RemoveIgnoredKeywords(content);
+                           
                             firstChoice["message"]["content"] =RemoveIgnoredKeywords(content);
                             firstChoice["message"]["content"] = firstChoice["message"]["content"].ToString().Replace("\n", "<br/>");
 

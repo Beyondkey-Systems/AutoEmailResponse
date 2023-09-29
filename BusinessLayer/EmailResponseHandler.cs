@@ -32,7 +32,10 @@ namespace BusinessLayer
                 string combinedText = string.Join(" ", tags);
 
                 int matches = keywords.Sum(keyword =>
-                    Regex.Matches(combinedText, @"\b" + Regex.Escape(keyword) + @"\b", RegexOptions.IgnoreCase).Count);
+                {
+                    var matchesForKeyword = Regex.Matches(combinedText, @"\b" + Regex.Escape(keyword) + @"\b", RegexOptions.IgnoreCase);
+                    return matchesForKeyword.Count > 0 ? 1 : 0; // Consider each keyword match as 1
+                });
 
                 if (matches > maxMatches)
                 {
@@ -50,7 +53,10 @@ namespace BusinessLayer
                 string name = item.Element("name")?.Value ?? "";
 
                 int matches = keywords.Sum(keyword =>
-                    Regex.Matches(name, @"\b" + Regex.Escape(keyword) + @"\b", RegexOptions.IgnoreCase).Count);
+                {
+                    var matchesForKeyword = Regex.Matches(name, @"\b" + Regex.Escape(keyword) + @"\b", RegexOptions.IgnoreCase);
+                    return matchesForKeyword.Count > 0 ? 1 : 0; // Consider each keyword match as 1
+                });
 
                 if (matches > maxMatches)
                 {
@@ -101,38 +107,35 @@ namespace BusinessLayer
 
             return null; // Invalid email format
         }
-        public static async Task<string> ExtractKeywordsFromDomain(string apiKey, string Domain)
+        public static string ReplaceUrlsNotInXml(string input, string contentRootPath)
         {
-            string customInstruction = $"You are a language model, understand the core business of domain: {Domain} and based on core business, extract only 5 keywords. do not share any additional information";
+            string relativeFilePath = "DB/AllUrls.xml";
+            string physicalFilePath = Path.Combine(contentRootPath, relativeFilePath);
 
-            string endpoint = "https://api.openai.com/v1/chat/completions"; // Use the appropriate endpoint
+            string xmlContent = File.ReadAllText(physicalFilePath);
+            XElement xml = XElement.Parse(xmlContent);
 
-            using (var client = new HttpClient())
+            List<string> validUrls = xml.Descendants("url")
+                                        .Select(e => e.Value)
+                                        .ToList();
+
+            string urlPattern = @"(https?://[^\s/$.?#].[^\s]*)";
+            Regex regex = new Regex(urlPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+            string[] words = input.Split(' ');
+
+            for (int i = 0; i < words.Length; i++)
             {
-                var request = new HttpRequestMessage(HttpMethod.Post, endpoint);
-                request.Headers.Add("Authorization", $"Bearer {apiKey}");
-                var jsonBody = new
+                string word = words[i];
+                if (regex.IsMatch(word) && !validUrls.Contains(word))
                 {
-                    model = "gpt-3.5-turbo",
-                    messages = new[]
-                      {
-                            new { role = "system", content = customInstruction }
-                      }
-                };
-                var jsonBodyString = JsonConvert.SerializeObject(jsonBody);
-
-                request.Content = new StringContent(jsonBodyString, Encoding.UTF8, "application/json");
-
-                var response = await client.SendAsync(request);
-                var responseContent = await response.Content.ReadAsStringAsync();
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    throw new Exception($"Error calling OpenAI API: {response.StatusCode} - {responseContent}");
+                    words[i] = "https://www.beyondintranet.com/";
                 }
-                return responseContent;
             }
+
+            return string.Join(" ", words);
         }
+
         public static async Task<List<string>> ExtractKeywordsfromDomain(string apiKey, string Domain)
         {
 
