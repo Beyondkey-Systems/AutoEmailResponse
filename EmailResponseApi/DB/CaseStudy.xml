@@ -306,7 +306,7 @@
 		<url>https://www.beyondintranet.com/pdf/HR-Directory.pdf</url>
 		<ptags>
 			<tagname>HR-Directory</tagname>
-			<tagname>HR Directory</tagname>
+			<tagname>SharePoint</tagname>
 			<tagname>HR 365 Directory</tagname>
 			<tagname>SharePoint</tagname>
 			<tagname>Manufacturing</tagname>
@@ -543,7 +543,7 @@
 			<tagname>PowerApps</tagname>
 			<tagname>Manufacturing</tagname>
 			<tagname>FMCG</tagname>
-			<tagname>Food Processing</tagname>
+			<tagname>Food</tagname>
 		</ptags>
 		<tags>
 			<tagname>PowerApps</tagname>
@@ -698,10 +698,10 @@
 		</name>
 		<url>https://www.beyondintranet.com/pdf/lineslip-casestudy.pdf</url>
 		<ptags>
-			<tagname>documents</tagname>
-			<tagname>document processing</tagname>
-			<tagname>document management</tagname>
-			<tagname>file processing</tagname>
+			<tagname>Sharepoint</tagname>
+			<tagname>document</tagname>
+			<tagname>file</tagname>
+			<tagname>insurance documents</tagname>
 		</ptags>
 		<tags>
 			<tagname>Power Automate</tagname>
@@ -945,9 +945,7 @@
 		<url>https://www.beyondintranet.com/pdf/volunteerOnboarding.pdf</url>
 		<ptags>
 			<tagname>Employee Onboarding</tagname>
-			<tagname>SharePoint solution</tagname>
-			<tagname>Office 365</tagname>
-		
+			<tagname>SharePoint</tagname>
 		</ptags>
 		<tags>
 			<tagname>Employee Onboarding</tagname>
@@ -1021,8 +1019,8 @@
 		<url>https://www.beyondintranet.com/pdf/sipcam-ocr.pdf</url>
 		<ptags>
 			<tagname>OCR</tagname>
-			<tagname>OCR-based AI Solution</tagname>
-			<tagname>invoice processing</tagname>
+			<tagname>OCR-based AI</tagname>
+			<tagname>invoice</tagname>
 			<tagname>automation</tagname>
 			<tagname>Sharepoint</tagname>
 		</ptags>
@@ -1175,7 +1173,7 @@
 		</name>
 		<url>https://www.beyondintranet.com/pdf/dms.pdf</url>
 		<ptags>
-			<tagname>SharePoint Solution</tagname>
+			<tagname>SharePoint</tagname>
 			<tagname>Document Management</tagname>
 			<tagname>Document Security</tagname>
 			<tagname>Intranet</tagname>
@@ -1236,7 +1234,7 @@
 		</name>
 		<url>https://www.beyondintranet.com/pdf/JSC-Consultants.pdf</url>
 		<ptags>
-			<tagname>SharePoint Solution</tagname>
+			<tagname>SharePoint</tagname>
 			<tagname>Document Management</tagname>
 			<tagname>Risk Management</tagname>
 			<tagname>RMS</tagname>
@@ -1637,7 +1635,7 @@
 			<tagname>document storage and sharing process</tagname>
 			<tagname>user permissions</tagname>
 			<tagname>Document Library</tagname>
-			<tagname>Document Processing</tagname>
+			<tagname>Document</tagname>
 		</ptags>
 		<tags>
 			<tagname>Document Management</tagname>
@@ -2248,7 +2246,8 @@
 		</name>
 		<url>https://www.beyondintranet.com/pdf/healthcareKM.pdf</url>
 		<ptags>
-			<tagname>Knowledge Management</tagname>
+			<tagname>Knowledge</tagname>
+			<tagname>KMS</tagname>
 			<tagname>SharePoint</tagname>
 			<tagname>Intranet</tagname>
 			<tagname>Knowledge sharing</tagname>
@@ -2304,12 +2303,12 @@
 		</name>
 		<url>https://www.beyondintranet.com/pdf/transtar.pdf</url>
 		<ptags>
-			<tagname>Knowledge Management</tagname>
+			<tagname>Knowledge</tagname>
 			<tagname>SharePoint</tagname>
 			<tagname>Intranet</tagname>
 			<tagname>Knowledge sharing</tagname>
 			<tagname>Knowledge repository</tagname>
-			<tagname>Knowledge bank</tagname>
+			<tagname>KMS</tagname>
 			<tagname>Data analytics</tagname>
 			<tagname>KM</tagname>
 		</ptags>

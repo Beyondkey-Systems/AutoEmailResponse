@@ -147,7 +147,7 @@ namespace EmailResponseApi.Controllers
                         StatusCode = response.StatusCode,
                         Content = responseContent
                     };
-                    SendEmail(customResponse);
+                    //SendEmail(customResponse);
                     return customResponse;
                 }
             }

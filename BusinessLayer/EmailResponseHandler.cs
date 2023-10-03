@@ -47,29 +47,6 @@ namespace BusinessLayer
 
             if (matchedUrl.Count > 0) return matchedUrl; // If URL found in ptags, return it
 
-            // Next, search in <name>
-            foreach (var item in xdoc.Descendants("item"))
-            {
-                string name = item.Element("name")?.Value ?? "";
-
-                int matches = keywords.Sum(keyword =>
-                {
-                    var matchesForKeyword = Regex.Matches(name, @"\b" + Regex.Escape(keyword) + @"\b", RegexOptions.IgnoreCase);
-                    return matchesForKeyword.Count > 0 ? 1 : 0; // Consider each keyword match as 1
-                });
-
-                if (matches > maxMatches)
-                {
-                    matchedUrl.Clear();
-                    maxMatches = matches;
-                    matchedUrl.Add(item.Element("url")?.Value);
-                }
-            }
-
-            if (matchedUrl.Count > 0) return matchedUrl; // If URL found in name, return it
-
-           
-
             return matchedUrl;
         }
 
