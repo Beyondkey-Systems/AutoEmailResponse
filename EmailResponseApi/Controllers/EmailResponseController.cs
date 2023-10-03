@@ -133,7 +133,7 @@ namespace EmailResponseApi.Controllers
                             content += _configuration["DisplayCautionText"] == "True" ? $" <br/><span style=\"font-size: 10px; font-family: 'Helvetica Neue';\">{_configuration["CautionText"]}</span>" : string.Empty;
                             content = RemoveIgnoredKeywords(content);
                            
-                            firstChoice["message"]["content"] =RemoveIgnoredKeywords(content);
+                            firstChoice["message"]["content"] =content;
                             firstChoice["message"]["content"] = firstChoice["message"]["content"].ToString().Replace("\n", "<br/>");
 
                         }
