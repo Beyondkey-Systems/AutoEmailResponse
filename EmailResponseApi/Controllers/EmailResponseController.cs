@@ -63,13 +63,23 @@ namespace EmailResponseApi.Controllers
                     if (WebsiteURL.Trim().Contains("beyondintranet"))
                     {
                         string Domain = EmailResponseHandler.GetDomainFromEmail(Email);
-                        var Domainkeywords = await EmailResponseHandler.ExtractKeywordsfromDomain(apiKey, Domain);
-                        var UserQueryKeywords = await EmailResponseHandler.ExtractKeywordsfromUserQuery(apiKey, inputText);
-                        Domainkeywords = Domainkeywords.Select(keyword => keyword.Trim()).ToList();
-                        UserQueryKeywords = UserQueryKeywords.Select(keyword => keyword.Trim()).ToList();
-                        var FinalKeywords = UserQueryKeywords.Concat(Domainkeywords).ToList();
+                        //var Domainkeywords = await EmailResponseHandler.ExtractKeywordsfromDomain(apiKey, Domain);
+                        //Domainkeywords = Domainkeywords.Select(keyword => keyword.Trim()).ToList();
+                        List<string> UserQueryKeywords = await EmailResponseHandler.ExtractKeywordsfromUserQuery(apiKey, inputText);
+                        List<string> keywordsArray = new List<string>();
 
-                        CaseStudyFiles = GetCaseStudy(FinalKeywords);
+                        // Iterate through each string in the list
+                        foreach (var userQuery in UserQueryKeywords)
+                        {
+                            // Split the comma-separated keywords in the current string and trim them
+                            var keywordsInCurrentQuery = userQuery.Split(',').Select(keyword => keyword.Trim());
+
+                            // Add the keywords from the current string to the result list
+                            keywordsArray.AddRange(keywordsInCurrentQuery);
+                        }
+                        //var FinalKeywords = UserQueryKeywords.Concat(Domainkeywords).ToList();
+
+                        CaseStudyFiles = GetCaseStudy(keywordsArray);
                         customInstruction = _configuration["CustomInstructionBeyondIntranet1"] + " ";
                         customInstruction += "For 'Product' inquiries, i can be asked about specific products like 'HR Directory,' 'Organizational Chart,' etc or similar kind of products., and I'll provide relevant links as specified here. ";
                         var products = _configuration.GetSection("BeyondIntranetProducts");
@@ -84,7 +94,18 @@ namespace EmailResponseApi.Controllers
                             customInstruction += $"Should always suggest to take a moment to review our case studies. ";
                         customInstruction += _configuration["CustomInstructionBeyondIntranet3"];
                         customInstruction += _configuration["SampleResponse1"];
+                        if (CaseStudyFiles.Count == 1)
+                            customInstruction += "Meanwhile please take a moment to review our comprehensive case study.";
+                        if (CaseStudyFiles.Count > 1)
+                            customInstruction += "Meanwhile please take a moment to review our case studies.";
+                        customInstruction += "<br/><br/>Best Regards,<br/>Beyond Intranet";
+
                         customInstruction += _configuration["SampleResponse2"];
+                        if (CaseStudyFiles.Count == 1)
+                            customInstruction += "Meanwhile please take a moment to review our comprehensive case study.";
+                        if (CaseStudyFiles.Count > 1)
+                            customInstruction += "Meanwhile please take a moment to review our case studies.";
+                        customInstruction += "<br/><br/>Best Regards,<br/>Beyond Intranet";
                     }
                     else
                         customInstruction = _configuration["CustomInstructionBeyondkey"];

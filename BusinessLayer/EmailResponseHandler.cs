@@ -147,7 +147,7 @@ namespace BusinessLayer
             var openAiApi = new OpenAI_API.OpenAIAPI(apiKey);
 
             // Input text from which to extract keywords
-            string customInstruction = $"You are a language model, understand the user's query: '{UserQuery}' and extract only 5 keywords. Do not share any additional information.";
+            string customInstruction = $"Understand the Task and extract 1 or 2 important keywords related to the task. Do not share any additional information.\n Task:\n'{UserQuery}'";
 
             try
             {
