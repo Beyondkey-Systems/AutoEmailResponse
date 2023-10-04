@@ -16,8 +16,6 @@ using BusinessLayer;
 using Microsoft.Extensions.Hosting;
 using System;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
-
-
 namespace EmailResponseApi.Controllers
 {
 
@@ -33,6 +31,7 @@ namespace EmailResponseApi.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _environment;
+        private List<string> CaseStudyFiles;
 
         public EmailResponseController(IWebHostEnvironment environment, IConfiguration configuration)
         {
@@ -58,28 +57,11 @@ namespace EmailResponseApi.Controllers
                 {
                     var request = new HttpRequestMessage(HttpMethod.Post, endpoint);
                     request.Headers.Add("Authorization", $"Bearer {apiKey}");
-                    List<string> CaseStudyFiles = new List<string>();
+                    
                     var customInstruction = string.Empty;
                     if (WebsiteURL.Trim().Contains("beyondintranet"))
                     {
                         string Domain = EmailResponseHandler.GetDomainFromEmail(Email);
-                        //var Domainkeywords = await EmailResponseHandler.ExtractKeywordsfromDomain(apiKey, Domain);
-                        //Domainkeywords = Domainkeywords.Select(keyword => keyword.Trim()).ToList();
-                        List<string> UserQueryKeywords = await EmailResponseHandler.ExtractKeywordsfromUserQuery(apiKey, inputText);
-                        List<string> keywordsArray = new List<string>();
-
-                        // Iterate through each string in the list
-                        foreach (var userQuery in UserQueryKeywords)
-                        {
-                            // Split the comma-separated keywords in the current string and trim them
-                            var keywordsInCurrentQuery = userQuery.Split(',').Select(keyword => keyword.Trim());
-
-                            // Add the keywords from the current string to the result list
-                            keywordsArray.AddRange(keywordsInCurrentQuery);
-                        }
-                        //var FinalKeywords = UserQueryKeywords.Concat(Domainkeywords).ToList();
-
-                        CaseStudyFiles = GetCaseStudy(keywordsArray);
                         customInstruction = _configuration["CustomInstructionBeyondIntranet1"] + " ";
                         customInstruction += "For 'Product' inquiries, i can be asked about specific products like 'HR Directory,' 'Organizational Chart,' etc or similar kind of products., and I'll provide relevant links as specified here. ";
                         var products = _configuration.GetSection("BeyondIntranetProducts");
@@ -88,6 +70,8 @@ namespace EmailResponseApi.Controllers
                             customInstruction += $"You can learn more about '{product.Key}' here: {product.Value}|";
                         }
                         customInstruction += _configuration["CustomInstructionBeyondIntranet2"];
+                        
+                        CaseStudyFiles = await FindCaseStudy(Domain, inputText);
                         if (CaseStudyFiles.Count == 1)
                             customInstruction += $"Should always force to take a moment to review relevant case study.";
                         if (CaseStudyFiles.Count > 1)
@@ -189,7 +173,8 @@ namespace EmailResponseApi.Controllers
 
             return Regex.Replace(Content, pattern, "", RegexOptions.IgnoreCase);
         }
-        private List<string> GetCaseStudy(List<string> Keywords)
+       
+        private async Task<List<string>> FindCaseStudy(string Domain, string inputText)
         {
             EmailResponseHandler emailResponseHandler = new EmailResponseHandler();
             string relativeFilePath = "DB/CaseStudy.xml";
@@ -198,10 +183,31 @@ namespace EmailResponseApi.Controllers
 
             // Combine the content root path with the relative file path
             string physicalFilePath = Path.Combine(contentRootPath, relativeFilePath);
-
-
             string xmlContent = System.IO.File.ReadAllText(physicalFilePath);
-            var Url = emailResponseHandler.SearchKeywordsInCaseStudyXML(Keywords, xmlContent);
+            
+            var apiKey = _configuration["apiKey"];
+            var Domainkeywords = await EmailResponseHandler.ExtractKeywordsfromDomain(apiKey, Domain);
+            Domainkeywords = Domainkeywords.Select(keyword => keyword.Trim()).ToList();
+            List<string> UserQueryKeywords = await EmailResponseHandler.ExtractKeywordsfromUserQuery(apiKey, inputText);
+            List<string> UserQuerykeywordsArray = new List<string>();
+
+            // Iterate through each string in the list
+            foreach (var userQuery in UserQueryKeywords)
+            {
+                // Split the comma-separated keywords in the current string and trim them
+                var keywordsInCurrentQuery = userQuery.Split(',').Select(keyword => keyword.Trim());
+
+                // Add the keywords from the current string to the result list
+                UserQuerykeywordsArray.AddRange(keywordsInCurrentQuery);
+            }
+            var FinalKeywords = UserQuerykeywordsArray.Concat(Domainkeywords).ToList();
+
+            /*********FIRST ATTEMPT (PASSING DOMAIN AND USER QUERY KEYWORD TO GET CASE STUDY***********/
+            var Url = emailResponseHandler.SearchKeywordsInCaseStudyXML(FinalKeywords, xmlContent);
+            if(Url.Count>0) return Url;
+
+            /*********SECOND ATTEMPT (PASSING USER QUERY KEYWORD TO GET CASE STUDY***********/
+            Url = emailResponseHandler.SearchKeywordsInCaseStudyXML(UserQuerykeywordsArray, xmlContent);
             return Url;
         }
 

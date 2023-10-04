@@ -22,33 +22,28 @@ namespace BusinessLayer
         public List<string> SearchKeywordsInCaseStudyXML(List<string> keywords, string xmlContent)
         {
             XDocument xdoc = XDocument.Parse(xmlContent);
-            int maxMatches = 0;
-            List<string> matchedUrl = new List<string>();
+            List<string> matchedUrls = new List<string>();
 
-            // First, search in <ptags>
             foreach (var item in xdoc.Descendants("item"))
             {
                 IEnumerable<string> tags = item.Descendants("ptags").Descendants("tagname").Select(tag => tag.Value);
                 string combinedText = string.Join(" ", tags);
 
-                int matches = keywords.Sum(keyword =>
+                bool allKeywordsMatched = keywords.All(keyword =>
                 {
                     var matchesForKeyword = Regex.Matches(combinedText, @"\b" + Regex.Escape(keyword) + @"\b", RegexOptions.IgnoreCase);
-                    return matchesForKeyword.Count > 0 ? 1 : 0; // Consider each keyword match as 1
+                    return matchesForKeyword.Count > 0;
                 });
 
-                if (matches > maxMatches)
+                if (allKeywordsMatched)
                 {
-                    matchedUrl.Clear();
-                    maxMatches = matches;
-                    matchedUrl.Add(item.Element("url")?.Value);
+                    matchedUrls.Add(item.Element("url")?.Value);
                 }
             }
 
-            if (matchedUrl.Count > 0) return matchedUrl; // If URL found in ptags, return it
-
-            return matchedUrl;
+            return matchedUrls;
         }
+
 
         public static string GetDomainFromEmail(string email)
         {
@@ -105,7 +100,7 @@ namespace BusinessLayer
             var openAiApi = new OpenAI_API.OpenAIAPI(apiKey);
 
             // Input text from which to extract keywords
-            string customInstruction = $"You are a language model, understand the core business of domain: {Domain} and based on core business, extract only 1 keywords. do not share any additional information";
+            string customInstruction = $"You are a language model, understand the core business of domain: {Domain} and based on core business, extract only 1 or 2 important keywords. do not share any additional information";
 
             try
             {
