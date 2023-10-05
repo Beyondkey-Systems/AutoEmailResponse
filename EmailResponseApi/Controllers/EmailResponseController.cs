@@ -46,10 +46,13 @@ namespace EmailResponseApi.Controllers
             try
             {
                 var apiKey = _configuration["apiKey"];
+                string contentRootPath = _environment.ContentRootPath;
+                bool isCaseStudyToShare = false, isWebsiteUrlToShare = false;
+
+                var MatchedKeywords=await EmailResponseHandler.ExtractMatchedKeywords(contentRootPath, apiKey, inputText);
 
                 inputText = "Name: " + FullName + "|" + Regex.Replace(inputText, @"\s+", " ").Trim();
                 string formattedText = $"Text: \"\"\"\n{inputText}\n\"\"\"";
-
 
                 var endpoint = "https://api.openai.com/v1/chat/completions";
 
@@ -70,7 +73,10 @@ namespace EmailResponseApi.Controllers
                             customInstruction += $"You can learn more about '{product.Key}' here: {product.Value}|";
                         }
                         customInstruction += _configuration["CustomInstructionBeyondIntranet2"];
-                        CaseStudyFiles = await FindCaseStudy(Domain, inputText);
+                        
+                        EmailResponseHandler emailResponseHandler = new EmailResponseHandler();
+                        CaseStudyFiles = await emailResponseHandler.FindCaseStudy(contentRootPath,apiKey, Domain, inputText);
+                        
                         if (CaseStudyFiles.Count == 1)
                             customInstruction += $"Should always force to take a moment to review relevant case study.";
                         if (CaseStudyFiles.Count > 1)
@@ -171,40 +177,6 @@ namespace EmailResponseApi.Controllers
             string pattern = "(" + string.Join("|", ignoreKeywords.Select(kw => Regex.Escape(kw))) + ")";
 
             return Regex.Replace(Content, pattern, "", RegexOptions.IgnoreCase);
-        }
-
-        private async Task<List<string>> FindCaseStudy(string Domain, string inputText)
-        {
-            EmailResponseHandler emailResponseHandler = new EmailResponseHandler();
-            string relativeFilePath = "DB/CaseStudy.xml";
-            // Get the content root path of your application
-            string contentRootPath = _environment.ContentRootPath;
-
-            // Combine the content root path with the relative file path
-            string physicalFilePath = Path.Combine(contentRootPath, relativeFilePath);
-            string xmlContent = System.IO.File.ReadAllText(physicalFilePath);
-
-            var apiKey = _configuration["apiKey"];
-            var Domainkeywords = await EmailResponseHandler.ExtractKeywordsfromDomain(apiKey, Domain);
-            Domainkeywords = Domainkeywords
-            .SelectMany(keyword => keyword.Split(',').Select(trimmedKeyword => trimmedKeyword.Trim()))
-            .ToList();
-
-            List<string> UserQueryKeywords = await EmailResponseHandler.ExtractKeywordsfromUserQuery(apiKey, inputText);
-            UserQueryKeywords = UserQueryKeywords
-           .SelectMany(keyword => keyword.Split(',').Select(trimmedKeyword => trimmedKeyword.Trim()))
-           .ToList();
-
-            
-            var FinalKeywords = UserQueryKeywords.Concat(Domainkeywords).ToList();
-
-            /*********FIRST ATTEMPT (PASSING DOMAIN AND USER QUERY KEYWORD TO GET CASE STUDY***********/
-            var Url = emailResponseHandler.SearchKeywordsInCaseStudyXML(FinalKeywords, xmlContent);
-            if (Url.Count > 0) return Url;
-
-            /*********SECOND ATTEMPT (PASSING USER QUERY KEYWORD TO GET CASE STUDY***********/
-            Url = emailResponseHandler.SearchKeywordsInCaseStudyXML(UserQueryKeywords, xmlContent);
-            return Url;
         }
 
         private void SendEmail(CustomResponse customResponse)

@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<M365>
+		<tagname>SharePoint Consulting</tagname>
+		<tagname>SharePoint Migration</tagname>
+		<tagname>SharePoint Custom Development</tagname>
+		<tagname>SharePoint Integration</tagname>
+		<tagname>SharePoint Services</tagname>
+		<tagname>SharePoint Intranet Development</tagname>
+		<tagname>SharePoint Intranet Design</tagname>
+		<tagname>SharePoint PowerApps</tagname>
+		<tagname>SharePoint Power Automate</tagname>
+		<tagname>Teams Consulting Services</tagname>
+		<tagname>Microsoft Office 365 Consulting</tagname>
+		<tagname>M365 Consulting</tagname>
+		<tagname>Intranet Design</tagname>
+		<tagname>Intranet Development</tagname>
+		<tagname>Intranet</tagname>
+		<tagname>App design</tagname>
+	</M365>
+	<Products>
+		<tagname>HR Directory 365</tagname>
+		<tagname>Employee Onboarding</tagname>
+		<tagname>Bid Management</tagname>
+		<tagname>Organizational Chart</tagname>
+		<tagname>Employee Directory</tagname>
+		<tagname>Itemized Bidding Software</tagname>
+		<tagname>Birthday Reminder</tagname>
+		<tagname>Knowledge Management</tagname>
+		<tagname>Procurement Management</tagname>
+		<tagname>Metro Tiles</tagname>
+		<tagname>HR Task Management 365</tagname>
+		<tagname>Timesheet Management</tagname>
+		<tagname>News Ticker</tagname>
+		<tagname>RSS Viewer</tagname>
+		<tagname>Employee Spotlight</tagname>
+		<tagname>Beyond Intranet Mobile App</tagname>
+		<tagname>Bug Tracker</tagname>
+		<tagname>Contract Management</tagname>
+		<tagname>Employee Hiring</tagname>
+		<tagname>Document Management System</tagname>
+		<tagname>HR Apps</tagname>
+		<tagname>Org Chart</tagname>
+		<tagname>eProcurement Softwares</tagname>
+		<tagname>directory</tagname>
+		<tagname>Knowledge base</tagname>
+		<tagname>task management</tagname>
+		<tagname>Timesheet</tagname>
+		<tagname>HR Timesheet 365</tagname>
+		<tagname>HR Directory</tagname>
+		<tagname>offboarding</tagname>
+		<tagname>onboarding &amp; offboarding</tagname>
+		<tagname>onboarding</tagname>
+		<tagname>staff directory</tagname>
+		<tagname>people directory</tagname>
+		<tagname>Bid Management System</tagname>
+		<tagname>Bid Management Software</tagname>
+		<tagname>Trial</tagname>
+		<tagname>Product Trial</tagname>
+		<tagname>Trial Version</tagname>
+		<tagname>issue</tagname>
+		<tagname>support</tagname>
+		<tagname>renewable</tagname>
+		<tagname>demo</tagname>
+	</Products>
+	<PowerBI>
+		<tagname>HR Analytics Solutions</tagname>
+		<tagname>Financial Analytics</tagname>
+		<tagname>Microsoft Power BI Consulting Services</tagname>
+		<tagname>Power BI Consultation</tagname>
+		<tagname>Power BI Integration Services</tagname>
+		<tagname>BI Dashboards Development</tagname>
+		<tagname>BI Embedded Services</tagname>
+		<tagname>Predictive Analytics Services</tagname>
+		<tagname>Advance Analytics</tagname>
+		<tagname>Insurance Analytics</tagname>
+		<tagname>Insurance Analytics &amp; Dashboards</tagname>
+		<tagname>Healthcare Analytics</tagname>
+		<tagname>Manufacturing Analytics</tagname>
+		<tagname>Non Profit Analytics</tagname>
+		<tagname>Power BI Development</tagname>
+		<tagname>Power BI Implementation</tagname>
+		<tagname>BI Analytics</tagname>
+		<tagname>Power BI</tagname>
+		<tagname>Power BI use cases</tagname>
+		<tagname>Data Integration Tools</tagname>
+		<tagname>Power BI SharePoint Integration</tagname>
+		<tagname>Power BI Dashboards</tagname>
+		<tagname>BI Dashboards</tagname>
+		<tagname>HR Dashboards</tagname>
+	</PowerBI>
+	<Inquiry>
+		<tagname>Pricing</tagname>
+		<tagname>Demo Call</tagname>
+		<tagname>Looking for Vendor</tagname>
+		<tagname>RFPs</tagname>
+	</Inquiry>
+	<Others>
+		<tagname>Job Application</tagname>
+		<tagname>Staff Augmentation</tagname>
+		<tagname>Case Study</tagname>
+		<tagname>E-book</tagname>
+		<tagname>Guest Post</tagname>
+		<tagname>Backlinks</tagname>
+		<tagname>Exploring Synergies and Partnership Opportunities</tagname>
+		<tagname>webinar video</tagname>
+	</Others>
+</root>
