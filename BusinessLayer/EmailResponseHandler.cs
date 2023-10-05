@@ -103,7 +103,7 @@ namespace BusinessLayer
                 }
             }
             // Create a prompt for OpenAI
-            string prompt = $"{customInstruction}\n\nBased on Available keywords, get relevant exact keywords only from below Keyword List, Do not share any additional information\r\nKeyword List:\n{string.Join(", ", keywords)}";
+            string prompt = $"{customInstruction}\n\nBased on Available keywords, get relevant exact keywords only in comma separated format, from below Keyword List, Do not share any additional information\r\nKeyword List:\n{string.Join(", ", keywords)} \n###Desired Output Format###\nKeyword1,Keyword2,Keyword3";
 
             // Initialize an HTTP client
             using var httpClient = new HttpClient();
@@ -149,7 +149,7 @@ namespace BusinessLayer
                         {
                             var extractedKeywords = firstChoice["message"]["content"].ToString();
                             // Split the response by lines and clean up each line
-                            var keywordLines = extractedKeywords.Split('\n')
+                            var keywordLines = extractedKeywords.Split(',')
                                 .Select(line => line.Trim())
                                 .Where(line => !string.IsNullOrEmpty(line))
                                 .ToList();
