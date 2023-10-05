@@ -57,7 +57,7 @@ namespace EmailResponseApi.Controllers
                 {
                     var request = new HttpRequestMessage(HttpMethod.Post, endpoint);
                     request.Headers.Add("Authorization", $"Bearer {apiKey}");
-                    
+
                     var customInstruction = string.Empty;
                     if (WebsiteURL.Trim().Contains("beyondintranet"))
                     {
@@ -70,7 +70,6 @@ namespace EmailResponseApi.Controllers
                             customInstruction += $"You can learn more about '{product.Key}' here: {product.Value}|";
                         }
                         customInstruction += _configuration["CustomInstructionBeyondIntranet2"];
-                        
                         CaseStudyFiles = await FindCaseStudy(Domain, inputText);
                         if (CaseStudyFiles.Count == 1)
                             customInstruction += $"Should always force to take a moment to review relevant case study.";
@@ -131,14 +130,14 @@ namespace EmailResponseApi.Controllers
                             {
                                 if (CaseStudyFiles.Count == 1)
                                     content = Regex.Replace(content, @"(<case study>|case study|casestudy)", $"<a href='{CaseStudyFiles[0]}'>$1</a>", RegexOptions.IgnoreCase);
-                                
+
                                 content = Regex.Replace(content, @"(case studies|casestudies|case-studies)", "<a href='https://www.beyondintranet.com/customer-stories'>$1</a>", RegexOptions.IgnoreCase);
                             }
-                            content += _configuration["DisplayPoweredByBKChatbot"] == "True"? $" <br/><br/><span style=\"font-size: 10px; font-family: 'Helvetica Neue';\">[Powered by Beyond Key Chatbot]</span>": string.Empty;
+                            content += _configuration["DisplayPoweredByBKChatbot"] == "True" ? $" <br/><br/><span style=\"font-size: 10px; font-family: 'Helvetica Neue';\">[Powered by Beyond Key Chatbot]</span>" : string.Empty;
                             content += _configuration["DisplayCautionText"] == "True" ? $" <br/><span style=\"font-size: 10px; font-family: 'Helvetica Neue';\">{_configuration["CautionText"]}</span>" : string.Empty;
                             content = RemoveIgnoredKeywords(content);
-                           
-                            firstChoice["message"]["content"] =content;
+
+                            firstChoice["message"]["content"] = content;
                             firstChoice["message"]["content"] = firstChoice["message"]["content"].ToString().Replace("\n", "<br/>");
 
                         }
@@ -173,7 +172,7 @@ namespace EmailResponseApi.Controllers
 
             return Regex.Replace(Content, pattern, "", RegexOptions.IgnoreCase);
         }
-       
+
         private async Task<List<string>> FindCaseStudy(string Domain, string inputText)
         {
             EmailResponseHandler emailResponseHandler = new EmailResponseHandler();
@@ -184,30 +183,27 @@ namespace EmailResponseApi.Controllers
             // Combine the content root path with the relative file path
             string physicalFilePath = Path.Combine(contentRootPath, relativeFilePath);
             string xmlContent = System.IO.File.ReadAllText(physicalFilePath);
-            
+
             var apiKey = _configuration["apiKey"];
             var Domainkeywords = await EmailResponseHandler.ExtractKeywordsfromDomain(apiKey, Domain);
-            Domainkeywords = Domainkeywords.Select(keyword => keyword.Trim()).ToList();
+            Domainkeywords = Domainkeywords
+            .SelectMany(keyword => keyword.Split(',').Select(trimmedKeyword => trimmedKeyword.Trim()))
+            .ToList();
+
             List<string> UserQueryKeywords = await EmailResponseHandler.ExtractKeywordsfromUserQuery(apiKey, inputText);
-            List<string> UserQuerykeywordsArray = new List<string>();
+            UserQueryKeywords = UserQueryKeywords
+           .SelectMany(keyword => keyword.Split(',').Select(trimmedKeyword => trimmedKeyword.Trim()))
+           .ToList();
 
-            // Iterate through each string in the list
-            foreach (var userQuery in UserQueryKeywords)
-            {
-                // Split the comma-separated keywords in the current string and trim them
-                var keywordsInCurrentQuery = userQuery.Split(',').Select(keyword => keyword.Trim());
-
-                // Add the keywords from the current string to the result list
-                UserQuerykeywordsArray.AddRange(keywordsInCurrentQuery);
-            }
-            var FinalKeywords = UserQuerykeywordsArray.Concat(Domainkeywords).ToList();
+            
+            var FinalKeywords = UserQueryKeywords.Concat(Domainkeywords).ToList();
 
             /*********FIRST ATTEMPT (PASSING DOMAIN AND USER QUERY KEYWORD TO GET CASE STUDY***********/
             var Url = emailResponseHandler.SearchKeywordsInCaseStudyXML(FinalKeywords, xmlContent);
-            if(Url.Count>0) return Url;
+            if (Url.Count > 0) return Url;
 
             /*********SECOND ATTEMPT (PASSING USER QUERY KEYWORD TO GET CASE STUDY***********/
-            Url = emailResponseHandler.SearchKeywordsInCaseStudyXML(UserQuerykeywordsArray, xmlContent);
+            Url = emailResponseHandler.SearchKeywordsInCaseStudyXML(UserQueryKeywords, xmlContent);
             return Url;
         }
 
