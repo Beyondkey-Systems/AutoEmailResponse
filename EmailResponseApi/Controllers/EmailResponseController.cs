@@ -51,6 +51,8 @@ namespace EmailResponseApi.Controllers
 
                 var MatchedKeywords=await EmailResponseHandler.ExtractMatchedKeywords(contentRootPath, apiKey, inputText);
 
+                //write code for isCaseStudyToShare, isWebsiteUrlToShare
+
                 inputText = "Name: " + FullName + "|" + Regex.Replace(inputText, @"\s+", " ").Trim();
                 string formattedText = $"Text: \"\"\"\n{inputText}\n\"\"\"";
 

@@ -19,7 +19,7 @@ namespace BusinessLayer
 {
     public class EmailResponseHandler
     {
-        public async Task<List<string>> FindCaseStudy(string contentRootPath,string apiKey, string Domain, string inputText)
+        public async Task<List<string>> FindCaseStudy(string contentRootPath, string apiKey, string Domain, string inputText)
         {
             EmailResponseHandler emailResponseHandler = new EmailResponseHandler();
             string relativeFilePath = "DB/CaseStudy.xml";
@@ -27,7 +27,7 @@ namespace BusinessLayer
             // Combine the content root path with the relative file path
             string physicalFilePath = Path.Combine(contentRootPath, relativeFilePath);
             string xmlContent = System.IO.File.ReadAllText(physicalFilePath);
-            
+
             var Domainkeywords = await EmailResponseHandler.ExtractKeywordsfromDomain(apiKey, Domain);
             Domainkeywords = Domainkeywords
             .SelectMany(keyword => keyword.Split(',').Select(trimmedKeyword => trimmedKeyword.Trim()))
@@ -77,7 +77,7 @@ namespace BusinessLayer
 
         public static async Task<List<string>> ExtractMatchedKeywords(string contentRootPath, string apiKey, string userQuery)
         {
-            var UserQueryKeywords =await ExtractKeywordsfromUserQuery(apiKey, userQuery);
+            var UserQueryKeywords = await ExtractKeywordsfromUserQuery(apiKey, userQuery);
 
             // Build the prompt by combining user keywords
             string userKeywordsPrompt = string.Join(", ", UserQueryKeywords);
@@ -85,7 +85,7 @@ namespace BusinessLayer
             // Build the instruction for OpenAI
             string customInstruction = $"###Available keywords###\r\n: {userKeywordsPrompt}";
 
-            
+
             string relativeFilePath = "DB/Keyword.xml";
 
             // Combine the content root path with the relative file path
@@ -103,7 +103,7 @@ namespace BusinessLayer
                 }
             }
             // Create a prompt for OpenAI
-            string prompt = $"{customInstruction}\n\nBased on Available keywords, get relevant exact keywords only in comma separated format, from below Keyword List, Do not share any additional information\r\nKeyword List:\n{string.Join(", ", keywords)} \n###Desired Output Format###\nKeyword1,Keyword2,Keyword3";
+            string prompt = $"{customInstruction}\n\nBased on Available keywords, get relevant exact keywords only in comma separated format, from below Keyword List, Do not share any additional information. If no matching keyword found then share 'Others' as keyword\r\nKeyword List:\n{string.Join(", ", keywords)} \n###Desired Output Format###\nKeyword1,Keyword2,Keyword3";
 
             // Initialize an HTTP client
             using var httpClient = new HttpClient();
@@ -305,7 +305,63 @@ namespace BusinessLayer
             }
         }
 
+        public static bool IsCaseStudyToShow(string[] keywords, string contentRootPath)
+        {
+            bool IsCaseStudyToShow = false;
+            string relativeFilePath = "DB/Keyword.xml";
 
+            // Combine the content root path with the relative file path
+            string physicalFilePath = Path.Combine(contentRootPath, relativeFilePath);
+            XDocument xmlDocument = XDocument.Load(physicalFilePath);
+
+            bool isFoundInM365 = keywords.Any(k =>
+                xmlDocument.Element("root").Element("M365").Elements("tagname").Any(e => e.Value.Contains(k, StringComparison.OrdinalIgnoreCase)));
+            bool isFoundInProducts = keywords.Any(k =>
+                xmlDocument.Element("root").Element("Products").Elements("tagname").Any(e => e.Value.Contains(k, StringComparison.OrdinalIgnoreCase)));
+            bool isFoundInPowerBI = keywords.Any(k =>
+                xmlDocument.Element("root").Element("PowerBI").Elements("tagname").Any(e => e.Value.Contains(k, StringComparison.OrdinalIgnoreCase)));
+            bool isFoundInInquiry = keywords.Any(k =>
+                xmlDocument.Element("root").Element("Inquiry").Elements("tagname").Any(e => e.Value.Contains(k, StringComparison.OrdinalIgnoreCase)));
+            bool isFoundInOthers = keywords.Any(k =>
+                xmlDocument.Element("root").Element("Others").Elements("tagname").Any(e => e.Value.Contains(k, StringComparison.OrdinalIgnoreCase)));
+
+            //if none of match then false
+            if (isFoundInM365 == false && isFoundInProducts == false && isFoundInPowerBI == false && isFoundInInquiry == false)
+                return false;
+
+            if (isFoundInM365 == false && isFoundInProducts == false && isFoundInPowerBI == false && isFoundInInquiry == true && isFoundInOthers==false)
+                return true;
+
+            if (isFoundInOthers)
+                IsCaseStudyToShow = false;
+
+            if (isFoundInM365 || isFoundInProducts || isFoundInPowerBI )
+                IsCaseStudyToShow = true;
+
+
+            return IsCaseStudyToShow;
+        }
+
+        public static bool IsWebSiteUrlToShow(string[] keywords, string contentRootPath)
+        {
+            string relativeFilePath = "DB/Keyword.xml";
+
+            // Combine the content root path with the relative file path
+            string physicalFilePath = Path.Combine(contentRootPath, relativeFilePath);
+            XDocument xmlDocument = XDocument.Load(physicalFilePath);
+
+            // Check if any combination of keywords exists in M365, Products, Power BI, and OtherKeywords
+            bool isCombinationPresent = keywords.Any(k => xmlDocument.Element("root").Element("M365").Elements("tagname").Any(e => e.Value.Contains(k, StringComparison.OrdinalIgnoreCase)) ||
+                                                         xmlDocument.Element("root").Element("Products").Elements("tagname").Any(e => e.Value.Contains(k, StringComparison.OrdinalIgnoreCase)) ||
+                                                         xmlDocument.Element("root").Element("PowerBI").Elements("tagname").Any(e => e.Value.Contains(k, StringComparison.OrdinalIgnoreCase)) ||
+                                                         xmlDocument.Element("root").Element("Others").Elements("tagname").Any(e => e.Value.Contains(k, StringComparison.OrdinalIgnoreCase)));
+
+            // Check if only Inquiry keywords are present
+            bool isOnlyInquiryPresent = keywords.All(k => xmlDocument.Element("root").Element("Inquiry").Elements("tagname").Any(e => e.Value.Contains(k, StringComparison.OrdinalIgnoreCase))) &&
+                                       !isCombinationPresent;
+
+            return isCombinationPresent || isOnlyInquiryPresent;
+        }
 
 
 
