@@ -46,12 +46,7 @@ namespace EmailResponseApi.Controllers
             try
             {
                 var apiKey = _configuration["apiKey"];
-                string contentRootPath = _environment.ContentRootPath;
-                bool isCaseStudyToShare = false, isWebsiteUrlToShare = false;
-
-                var MatchedKeywords=await EmailResponseHandler.ExtractMatchedKeywords(contentRootPath, apiKey, inputText);
-
-                //write code for isCaseStudyToShare, isWebsiteUrlToShare
+                
 
                 inputText = "Name: " + FullName + "|" + Regex.Replace(inputText, @"\s+", " ").Trim();
                 string formattedText = $"Text: \"\"\"\n{inputText}\n\"\"\"";
@@ -66,7 +61,19 @@ namespace EmailResponseApi.Controllers
                     var customInstruction = string.Empty;
                     if (WebsiteURL.Trim().Contains("beyondintranet"))
                     {
-                        string Domain = EmailResponseHandler.GetDomainFromEmail(Email);
+                        string contentRootPath = _environment.ContentRootPath;
+                        var MatchedKeywords = await EmailResponseHandler.ExtractMatchedKeywords(contentRootPath, apiKey, inputText);
+
+                        string relativeFilePath = "DB/Keyword.xml";
+
+                        // Combine the content root path with the relative file path
+                        string physicalFilePath = Path.Combine(contentRootPath, relativeFilePath);
+                        XDocument xmlDocument = XDocument.Load(physicalFilePath);
+                        bool IsCaseStudyToShow = EmailResponseHandler.IsCaseStudyToShow(MatchedKeywords, xmlDocument);
+                        bool IsWebSiteUrlToShow = EmailResponseHandler.IsWebSiteUrlToShow(MatchedKeywords, xmlDocument);
+                        //write code for isCaseStudyToShare, isWebsiteUrlToShare
+
+                        
                         customInstruction = _configuration["CustomInstructionBeyondIntranet1"] + " ";
                         customInstruction += "For 'Product' inquiries, i can be asked about specific products like 'HR Directory,' 'Organizational Chart,' etc or similar kind of products., and I'll provide relevant links as specified here. ";
                         var products = _configuration.GetSection("BeyondIntranetProducts");
@@ -75,27 +82,34 @@ namespace EmailResponseApi.Controllers
                             customInstruction += $"You can learn more about '{product.Key}' here: {product.Value}|";
                         }
                         customInstruction += _configuration["CustomInstructionBeyondIntranet2"];
-                        
+
+                        string Domain = EmailResponseHandler.GetDomainFromEmail(Email);
                         EmailResponseHandler emailResponseHandler = new EmailResponseHandler();
                         CaseStudyFiles = await emailResponseHandler.FindCaseStudy(contentRootPath,apiKey, Domain, inputText);
-                        
-                        if (CaseStudyFiles.Count == 1)
-                            customInstruction += $"Should always force to take a moment to review relevant case study.";
-                        if (CaseStudyFiles.Count > 1)
-                            customInstruction += $"Should always suggest to take a moment to review our case studies. ";
-                        customInstruction += _configuration["CustomInstructionBeyondIntranet3"];
-                        customInstruction += _configuration["SampleResponse1"];
-                        if (CaseStudyFiles.Count == 1)
-                            customInstruction += "Meanwhile please take a moment to review our comprehensive case study.";
-                        if (CaseStudyFiles.Count > 1)
-                            customInstruction += "Meanwhile please take a moment to review our case studies.";
+
+                        if (IsCaseStudyToShow)
+                        {
+                            if (CaseStudyFiles.Count == 1)
+                                customInstruction += $"Should always force to take a moment to review relevant case study.";
+                            if (CaseStudyFiles.Count > 1)
+                                customInstruction += $"Should always suggest to take a moment to review our case studies. ";
+                            customInstruction += _configuration["CustomInstructionBeyondIntranet3"];
+                            customInstruction += _configuration["SampleResponse1"];
+                            if (CaseStudyFiles.Count == 1)
+                                customInstruction += "Meanwhile please take a moment to review our comprehensive case study.";
+                            if (CaseStudyFiles.Count > 1)
+                                customInstruction += "Meanwhile please take a moment to review our case studies.";
+                        }
                         customInstruction += "<br/><br/>Best Regards,<br/>Beyond Intranet";
 
                         customInstruction += _configuration["SampleResponse2"];
-                        if (CaseStudyFiles.Count == 1)
-                            customInstruction += "Meanwhile please take a moment to review our comprehensive case study.";
-                        if (CaseStudyFiles.Count > 1)
-                            customInstruction += "Meanwhile please take a moment to review our case studies.";
+                        if (IsCaseStudyToShow)
+                        {
+                            if (CaseStudyFiles.Count == 1)
+                                customInstruction += "Meanwhile please take a moment to review our comprehensive case study.";
+                            if (CaseStudyFiles.Count > 1)
+                                customInstruction += "Meanwhile please take a moment to review our case studies.";
+                        }
                         customInstruction += "<br/><br/>Best Regards,<br/>Beyond Intranet";
                     }
                     else

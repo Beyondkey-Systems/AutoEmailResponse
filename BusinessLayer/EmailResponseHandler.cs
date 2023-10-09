@@ -305,14 +305,10 @@ namespace BusinessLayer
             }
         }
 
-        public static bool IsCaseStudyToShow(string[] keywords, string contentRootPath)
+        public static bool IsCaseStudyToShow(List<string> keywords, XDocument xmlDocument)
         {
             bool IsCaseStudyToShow = false;
-            string relativeFilePath = "DB/Keyword.xml";
-
-            // Combine the content root path with the relative file path
-            string physicalFilePath = Path.Combine(contentRootPath, relativeFilePath);
-            XDocument xmlDocument = XDocument.Load(physicalFilePath);
+           
 
             bool isFoundInM365 = keywords.Any(k =>
                 xmlDocument.Element("root").Element("M365").Elements("tagname").Any(e => e.Value.Contains(k, StringComparison.OrdinalIgnoreCase)));
@@ -332,9 +328,6 @@ namespace BusinessLayer
             if (isFoundInM365 == false && isFoundInProducts == false && isFoundInPowerBI == false && isFoundInInquiry == true && isFoundInOthers==false)
                 return true;
 
-            if (isFoundInOthers)
-                IsCaseStudyToShow = false;
-
             if (isFoundInM365 || isFoundInProducts || isFoundInPowerBI )
                 IsCaseStudyToShow = true;
 
@@ -342,25 +335,31 @@ namespace BusinessLayer
             return IsCaseStudyToShow;
         }
 
-        public static bool IsWebSiteUrlToShow(string[] keywords, string contentRootPath)
+        public static bool IsWebSiteUrlToShow(List<string> keywords, XDocument xmlDocument)
         {
-            string relativeFilePath = "DB/Keyword.xml";
+            bool IsWebSiteUrlToShow = false;
 
-            // Combine the content root path with the relative file path
-            string physicalFilePath = Path.Combine(contentRootPath, relativeFilePath);
-            XDocument xmlDocument = XDocument.Load(physicalFilePath);
 
-            // Check if any combination of keywords exists in M365, Products, Power BI, and OtherKeywords
-            bool isCombinationPresent = keywords.Any(k => xmlDocument.Element("root").Element("M365").Elements("tagname").Any(e => e.Value.Contains(k, StringComparison.OrdinalIgnoreCase)) ||
-                                                         xmlDocument.Element("root").Element("Products").Elements("tagname").Any(e => e.Value.Contains(k, StringComparison.OrdinalIgnoreCase)) ||
-                                                         xmlDocument.Element("root").Element("PowerBI").Elements("tagname").Any(e => e.Value.Contains(k, StringComparison.OrdinalIgnoreCase)) ||
-                                                         xmlDocument.Element("root").Element("Others").Elements("tagname").Any(e => e.Value.Contains(k, StringComparison.OrdinalIgnoreCase)));
+            bool isFoundInM365 = keywords.Any(k =>
+                xmlDocument.Element("root").Element("M365").Elements("tagname").Any(e => e.Value.Contains(k, StringComparison.OrdinalIgnoreCase)));
+            bool isFoundInProducts = keywords.Any(k =>
+                xmlDocument.Element("root").Element("Products").Elements("tagname").Any(e => e.Value.Contains(k, StringComparison.OrdinalIgnoreCase)));
+            bool isFoundInPowerBI = keywords.Any(k =>
+                xmlDocument.Element("root").Element("PowerBI").Elements("tagname").Any(e => e.Value.Contains(k, StringComparison.OrdinalIgnoreCase)));
+            bool isFoundInInquiry = keywords.Any(k =>
+                xmlDocument.Element("root").Element("Inquiry").Elements("tagname").Any(e => e.Value.Contains(k, StringComparison.OrdinalIgnoreCase)));
+            bool isFoundInOthers = keywords.Any(k =>
+                xmlDocument.Element("root").Element("Others").Elements("tagname").Any(e => e.Value.Contains(k, StringComparison.OrdinalIgnoreCase)));
 
-            // Check if only Inquiry keywords are present
-            bool isOnlyInquiryPresent = keywords.All(k => xmlDocument.Element("root").Element("Inquiry").Elements("tagname").Any(e => e.Value.Contains(k, StringComparison.OrdinalIgnoreCase))) &&
-                                       !isCombinationPresent;
+            //if none of match then false
+            if (isFoundInM365 == false && isFoundInProducts == false && isFoundInPowerBI == false && isFoundInInquiry == false)
+                return false;
 
-            return isCombinationPresent || isOnlyInquiryPresent;
+            if (isFoundInM365 || isFoundInProducts || isFoundInPowerBI)
+                IsWebSiteUrlToShow = true;
+
+
+            return IsWebSiteUrlToShow;
         }
 
 
