@@ -38,14 +38,14 @@ namespace BusinessLayer
            .SelectMany(keyword => keyword.Split(',').Select(trimmedKeyword => trimmedKeyword.Trim()))
            .ToList();
 
-            var FinalKeywords = UserQueryKeywords.Concat(Domainkeywords).ToList();
+            var UserQuery_DomainKeywords = UserQueryKeywords.Concat(Domainkeywords).ToList();
 
-            /*********FIRST ATTEMPT (PASSING DOMAIN AND USER QUERY KEYWORD TO GET CASE STUDY***********/
-            var Url = emailResponseHandler.SearchKeywordsInCaseStudyXML(FinalKeywords, xmlContent);
+            /*********FIRST ATTEMPT (PASSING USER QUERY KEYWORD TO GET CASE STUDY***********/
+            var Url = SearchKeywordsInCaseStudyXML(UserQueryKeywords, xmlContent);
             if (Url.Count > 0) return Url;
 
-            /*********SECOND ATTEMPT (PASSING USER QUERY KEYWORD TO GET CASE STUDY***********/
-            Url = SearchKeywordsInCaseStudyXML(UserQueryKeywords, xmlContent);
+            /*********SECOND ATTEMPT (PASSING DOMAIN AND USER QUERY KEYWORD TO GET CASE STUDY***********/
+            Url = emailResponseHandler.SearchKeywordsInCaseStudyXML(UserQuery_DomainKeywords, xmlContent);
             return Url;
         }
 
@@ -73,7 +73,7 @@ namespace BusinessLayer
                     maxMatches = matches;
                     matchedUrl.Add(item.Element("url")?.Value);
                 }
-                if(matches==maxMatches)
+                if (matches == maxMatches)
                     matchedUrl.Add(item.Element("url")?.Value);
             }
 
@@ -82,7 +82,60 @@ namespace BusinessLayer
             return matchedUrl;
         }
 
+        public static async Task<List<string>> ExtractMatchedKeywords(string contentRootPath, string apiKey, string inputText)
+        {
 
+            string relativeFilePath = "DB/Keyword.xml";
+
+            // Combine the content root path with the relative file path
+            string physicalFilePath = Path.Combine(contentRootPath, relativeFilePath);
+            List<string> masterKeywords = new List<string>();
+            XDocument xmlDocument = XDocument.Load(physicalFilePath);
+
+            // Iterate through XML elements and add keywords to the list
+            foreach (XElement category in xmlDocument.Root.Elements())
+            {
+                foreach (XElement keywordElement in category.Elements("tagname"))
+                {
+                    string keyword = keywordElement.Value;
+                    masterKeywords.Add(keyword);
+                }
+            }
+
+            // Initialize the OpenAI API client
+            var openAiApi = new OpenAIAPI(apiKey);
+
+            // Analyze the content using OpenAI
+            var response = await openAiApi.Completions.CreateCompletionAsync(new CompletionRequest()
+            {
+                Model = "text-davinci-003",
+                Temperature = 0.1,
+                MaxTokens = 50, // Adjust this value as needed
+                Prompt = $"Analyze the following text and provide key information:\n\nText: \"{inputText}\"\n\nPlease provide key details."
+            });
+
+            // Extracted information from the OpenAI analysis
+            string extractedInfo = response.Completions[0].Text;
+
+
+            // Split the extracted information into words
+            string[] extractedWords = extractedInfo.Split(new[] { ' ', ',', '.', ';', '!', '?', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+            // Find keywords that match the master list (case-insensitive)
+            var matchedKeywords = extractedWords
+            .Where(word => masterKeywords.Any(keyword => keyword.IndexOf(word, StringComparison.OrdinalIgnoreCase) >= 0))
+            .ToList();
+
+
+
+            if (matchedKeywords.Any())
+                return matchedKeywords;
+            else
+                return new List<string> { "Other" };
+        }
+
+
+        /*
         public static async Task<List<string>> ExtractMatchedKeywords(string contentRootPath, string apiKey, string userQuery)
         {
             var UserQueryKeywords = await ExtractKeywordsfromUserQuery(apiKey, userQuery);
@@ -178,7 +231,7 @@ namespace BusinessLayer
             }
             return new List<string>();
         }
-
+        */
 
         public static string GetDomainFromEmail(string email)
         {
@@ -228,6 +281,57 @@ namespace BusinessLayer
             return string.Join(" ", words);
         }
 
+        //public static async Task<bool> IsCareerRelated(string apiKey, string inputText)
+        //{
+
+        //    // Initialize the OpenAI API client
+        //    var openAiApi = new OpenAI_API.OpenAIAPI(apiKey);
+
+        //    // Input text from which to extract keywords
+        //    string customInstruction = $"Understand the following text, return response as 'True' if it is career related, job application, resume, asking for vacancy, asking for job or similar kind of content, else return response as False\n\nText: {inputText}\n\ndo not share any additional information";
+
+
+        //    var response = await openAiApi.Completions.CreateCompletionAsync(new CompletionRequest()
+        //    {
+        //        Model = "text-davinci-003",
+        //        Temperature = 0.1,
+        //        MaxTokens = 50,
+        //        Prompt = $"'{customInstruction}'"
+        //    }
+        //    );
+
+
+        //    // Extracted keywords from the response
+        //    // Access the generated text (keywords) from the response
+        //    var res = response.Completions[0].Text;
+        //    bool flag = false;
+        //    bool IsCareerRelated = false;
+        //    flag = bool.TryParse(res, out IsCareerRelated);
+        //    return flag ? IsCareerRelated : flag;
+
+        //}
+        public static async Task<bool> IsCareerRelated(string apiKey, string inputText)
+        {
+            // Initialize the OpenAI API client
+            var openAiApi = new OpenAI_API.OpenAIAPI(apiKey);
+
+            // Prompt for OpenAI to determine if the text is career-related
+            string prompt = $"Is the following text career-related?\n\nText: \"{inputText}\"\n\nPlease respond with 'Yes' or 'No'.";
+
+            var response = await openAiApi.Completions.CreateCompletionAsync(new CompletionRequest()
+            {
+                Model = "text-davinci-003",
+                Temperature = 0.1,
+                MaxTokens = 1, // Limit response to a single token (Yes or No)
+                Prompt = prompt
+            });
+
+            // Extract the response (Yes or No) from the completion
+            string responseText = response.Completions[0].Text.Trim().ToLower();
+
+            // Check if the response indicates 'Yes' for career-related
+            return responseText == "yes";
+        }
         public static async Task<List<string>> ExtractKeywordsfromDomain(string apiKey, string Domain)
         {
 
@@ -316,7 +420,7 @@ namespace BusinessLayer
         public static bool IsCaseStudyToShow(List<string> keywords, XDocument xmlDocument)
         {
             bool IsCaseStudyToShow = false;
-           
+
 
             bool isFoundInM365 = keywords.Any(k =>
                 xmlDocument.Element("root").Element("M365").Elements("tagname").Any(e => e.Value.Contains(k, StringComparison.OrdinalIgnoreCase)));
@@ -333,10 +437,10 @@ namespace BusinessLayer
             if (isFoundInM365 == false && isFoundInProducts == false && isFoundInPowerBI == false && isFoundInInquiry == false)
                 return false;
 
-            if (isFoundInM365 == false && isFoundInProducts == false && isFoundInPowerBI == false && isFoundInInquiry == true && isFoundInOthers==false)
+            if (isFoundInM365 == false && isFoundInProducts == false && isFoundInPowerBI == false && isFoundInInquiry == true && isFoundInOthers == false)
                 return true;
 
-            if (isFoundInM365 || isFoundInProducts || isFoundInPowerBI )
+            if (isFoundInM365 || isFoundInProducts || isFoundInPowerBI)
                 IsCaseStudyToShow = true;
 
 

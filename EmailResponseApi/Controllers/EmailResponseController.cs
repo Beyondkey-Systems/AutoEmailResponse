@@ -23,6 +23,7 @@ namespace EmailResponseApi.Controllers
     {
         public HttpStatusCode StatusCode { get; set; }
         public string Content { get; set; }
+        public bool IsCareerRelated {get;set; }
     }
 
     [Route("api/[controller]")]
@@ -71,8 +72,8 @@ namespace EmailResponseApi.Controllers
                         XDocument xmlDocument = XDocument.Load(physicalFilePath);
                         bool IsCaseStudyToShow = EmailResponseHandler.IsCaseStudyToShow(MatchedKeywords, xmlDocument);
                         bool IsWebSiteUrlToShow = EmailResponseHandler.IsWebSiteUrlToShow(MatchedKeywords, xmlDocument);
-                        //write code for isCaseStudyToShare, isWebsiteUrlToShare
-
+                        if (IsCaseStudyToShow == false && IsWebSiteUrlToShow == false)
+                            return  GetDefaultResponse(FullName);
 
                         customInstruction = _configuration["CustomInstructionBeyondIntranet1"] + " ";
                         customInstruction += "For 'Product' inquiries, i can be asked about specific products like 'HR Directory,' 'Organizational Chart,' etc or similar kind of products., and I'll provide relevant links as specified here. ";
@@ -166,11 +167,13 @@ namespace EmailResponseApi.Controllers
 
                     // Serialize the updated JSON back to a string
                     responseContent = jsonResponse.ToString();
-
+                    //functionality for isCareerRelated is common for both Beyondkey and Beyondintranet
+                    bool isCareerRelated =await EmailResponseHandler.IsCareerRelated(apiKey, inputText);
                     var customResponse = new CustomResponse
                     {
                         StatusCode = response.StatusCode,
-                        Content = responseContent
+                        Content = responseContent,
+                        IsCareerRelated= isCareerRelated
                     };
                     //SendEmail(customResponse);
                     return customResponse;
@@ -182,9 +185,24 @@ namespace EmailResponseApi.Controllers
                 return new CustomResponse
                 {
                     StatusCode = HttpStatusCode.InternalServerError,
-                    Content = "An error occurred while processing the request."
+                    Content = "An error occurred while processing the request.",
+                    IsCareerRelated= false
                 };
             }
+        }
+        private CustomResponse GetDefaultResponse(string FullName)
+        {
+            string DefaultResponse = "Hello " + FullName + ",<br/><br/>Thank you for reaching out to us with your Inquiry. We appreciate your interest.<br/><br/>Your query is important to us, and we want to ensure we provide you with the best possible information and assistance. Our dedicated team is currently reviewing your request, and you can expect to hear back from us shortly.";
+            DefaultResponse += "<br/><br/>Best Regards,<br/>Beyond Intranet";
+            DefaultResponse += _configuration["DisplayPoweredByBKChatbot"] == "True" ? $" <br/><br/><span style=\"font-size: 10px; font-family: 'Helvetica Neue';\">[Powered by Beyond Key Chatbot]</span>" : string.Empty;
+            DefaultResponse += _configuration["DisplayCautionText"] == "True" ? $" <br/><span style=\"font-size: 10px; font-family: 'Helvetica Neue';\">{_configuration["CautionText"]}</span>" : string.Empty;
+            var defaultResponse = new CustomResponse
+            {
+                StatusCode = HttpStatusCode.OK, // Use a success status code (e.g., HttpStatusCode.OK)
+                Content = DefaultResponse,
+                IsCareerRelated= false
+            };
+            return defaultResponse;
         }
         private string RemoveIgnoredKeywords(string Content)
         {
