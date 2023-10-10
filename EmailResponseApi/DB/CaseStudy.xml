@@ -6,7 +6,10 @@
 		<ptags>
 			<tagname>SharePoint</tagname>
 			<tagname>Healthcare</tagname>
-			<tagname>Revolutionizing</tagname>
+			<tagname>SharePoint Healthcare</tagname>
+			<tagname>Healthcare SharePoint</tagname>
+			<tagname>Patient Charge</tagname>
+			<tagname>Healthcare Analytics</tagname>
 		</ptags>
 		<tags>
 			<tagname>SharePoint</tagname>
@@ -79,6 +82,9 @@
 		<ptags>
 			<tagname>Itemized Bidding</tagname>
 			<tagname>Itemized Bid</tagname>
+			<tagname>Bid Management</tagname>
+			<tagname>Bid Management System</tagname>
+			<tagname>Bid Management Software</tagname>
 		</ptags>
 		<tags>
 			<tagname>Itemized Bidding</tagname>
@@ -128,8 +134,8 @@
 			<tagname>Hassle-Free Comparison</tagname>
 			<tagname>Audit and Compliance Management</tagname>
 			<tagname>Awarding/Procuring Line Items</tagname>
-	
-		
+
+
 		</tags>
 	</item>
 	<item>
@@ -200,8 +206,13 @@
 		</name>
 		<url>https://www.beyondintranet.com/pdf/Modern-Intranet-Portal-To-Improve-Collaboration.pdf</url>
 		<ptags>
+			<tagname>Teams Consulting Services</tagname>
 			<tagname>Intranet Portal</tagname>
+			<tagname>Sharepoint Intranet Portal</tagname>
+			<tagname>Sharepoint Intranet</tagname>
 			<tagname>collaboration</tagname>
+			<tagname>Information Management System</tagname>
+			<tagname>IMS</tagname>
 		</ptags>
 		<tags>
 			<tagname>Modern Intranet Portal</tagname>
@@ -247,6 +258,7 @@
 		<url>https://www.beyondintranet.com/pdf/EmployeeDirectory.pdf</url>
 		<ptags>
 			<tagname>Employee Directory</tagname>
+			<tagname>Sharepoint Employee Directory</tagname>
 			<tagname>NPO</tagname>
 		</ptags>
 		<tags>
@@ -280,7 +292,7 @@
 			<tagname>Number to Call</tagname>
 			<tagname>Department</tagname>
 			<tagname>Skills and Abilities</tagname>
-	
+
 			<tagname>Location</tagname>
 			<tagname>Additional Personal Information</tagname>
 			<tagname>Birthdays</tagname>
@@ -291,7 +303,7 @@
 			<tagname>Birthday and Anniversary Reminder</tagname>
 			<tagname>A Company</tagname>
 			<tagname>Website</tagname>
-			
+
 			<tagname>Phone Number</tagname>
 			<tagname>Screenshot</tagname>
 			<tagname>Conclusion</tagname>
@@ -306,10 +318,11 @@
 		<url>https://www.beyondintranet.com/pdf/HR-Directory.pdf</url>
 		<ptags>
 			<tagname>HR-Directory</tagname>
-			<tagname>SharePoint</tagname>
+			<tagname>HR-Directory 365</tagname>
+			<tagname>HR Directory 365</tagname>
+			<tagname>Sharepoint HR Directory</tagname>
+			<tagname>HR 365</tagname>
 			<tagname>HR 365 Directory</tagname>
-			<tagname>SharePoint</tagname>
-			<tagname>Manufacturing</tagname>
 		</ptags>
 		<tags>
 			<tagname>SharePoint</tagname>
@@ -343,7 +356,7 @@
 			<tagname>Beyond Intranet</tagname>
 			<tagname>Conclusion</tagname>
 			<tagname>Screen Shots</tagname>
-	
+
 		</tags>
 	</item>
 	<item>
@@ -352,12 +365,19 @@
 		</name>
 		<url>https://www.beyondintranet.com/pdf/TGS.pdf</url>
 		<ptags>
+			<tagname>Intranet Design</tagname>
+			<tagname>Intranet Development</tagname>
 			<tagname>SharePoint Migration</tagname>
 			<tagname>Intranet</tagname>
 			<tagname>Employee Engagement</tagname>
 			<tagname>Collaboration</tagname>
-			<tagname>Energy Sector</tagname>
-			<tagname>Data Analytics Company</tagname>
+			<tagname>Data Analytics</tagname>
+			<tagname>Sharegate</tagname>
+			<tagname>SharePoint Custom Development</tagname>
+			<tagname>SharePoint Integration</tagname>
+			<tagname>SharePoint Intranet Development</tagname>
+			<tagname>SharePoint Intranet Design</tagname>
+			<tagname>SharePoint Services</tagname>
 		</ptags>
 		<tags>
 			<tagname>SharePoint Migration</tagname>
@@ -401,7 +421,7 @@
 			<tagname>Fast Loading</tagname>
 			<tagname>Technical Dependencies</tagname>
 			<tagname>Website</tagname>
-		
+
 		</tags>
 	</item>
 	<item>
@@ -412,6 +432,8 @@
 		<ptags>
 			<tagname>PowerApps</tagname>
 			<tagname>Power Automate</tagname>
+			<tagname>SharePoint PowerApps</tagname>
+			<tagname>SharePoint Power Automate</tagname>
 			<tagname>Automate</tagname>
 			<tagname>Inspection</tagname>
 			<tagname>Quality Inspection</tagname>
@@ -466,9 +488,10 @@
 		</name>
 		<url>https://www.beyondintranet.com/pdf/lateetude-sharepoint-case-study.pdf</url>
 		<ptags>
-			<tagname>SharePoint</tagname>
-			<tagname>Hospital</tagname>
-			<tagname>healthcare</tagname>
+			<tagname>SharePoint Custom Development</tagname>
+			<tagname>Healthcare</tagname>
+			<tagname>SharePoint Healthcare</tagname>
+			<tagname>Healthcare SharePoint</tagname>
 			<tagname>manage inventory</tagname>
 			<tagname>Inventory</tagname>
 			<tagname>Covid situation</tagname>
@@ -541,6 +564,9 @@
 		<url>https://www.beyondintranet.com/pdf/FMCG.pdf</url>
 		<ptags>
 			<tagname>PowerApps</tagname>
+			<tagname>SharePoint PowerApps</tagname>
+			<tagname>SharePoint Power Automate</tagname>
+			<tagname>Automate</tagname>
 			<tagname>Manufacturing</tagname>
 			<tagname>FMCG</tagname>
 			<tagname>Food</tagname>
@@ -597,10 +623,22 @@
 		</name>
 		<url>https://www.beyondintranet.com/pdf/fenix-BI.pdf</url>
 		<ptags>
+			<tagname>Power BI Development</tagname>
+			<tagname>Power BI Implementation</tagname>
+			<tagname>BI Analytics</tagname>
+			<tagname>Power BI</tagname>
+			<tagname>Power BI use cases</tagname>
+			<tagname>Data Integration Tools</tagname>
+			<tagname>Power BI SharePoint Integration</tagname>
+			<tagname>Power BI Dashboards</tagname>
+			<tagname>BI Dashboards</tagname>
+			<tagname>Microsoft Power BI Consulting Services</tagname>
+			<tagname>Power BI Consultation</tagname>
+			<tagname>Power BI Integration Services</tagname>
+			<tagname>BI Dashboards Development</tagname>
+			<tagname>BI Embedded Services</tagname>
 			<tagname>dashboard</tagname>
 			<tagname>report</tagname>
-			<tagname>Power BI</tagname>
-			<tagname>reporting</tagname>
 			<tagname>reporting</tagname>
 			<tagname>Leading building materials company</tagname>
 			<tagname>Power BI sales analytics dashboards</tagname>
@@ -698,10 +736,14 @@
 		</name>
 		<url>https://www.beyondintranet.com/pdf/lineslip-casestudy.pdf</url>
 		<ptags>
-			<tagname>Sharepoint</tagname>
-			<tagname>document</tagname>
-			<tagname>file</tagname>
+			<tagname>PowerApps</tagname>
+			<tagname>SharePoint PowerApps</tagname>
+			<tagname>SharePoint Power Automate</tagname>
+			<tagname>Automate</tagname>
 			<tagname>insurance documents</tagname>
+			<tagname>M365 Consulting</tagname>
+			<tagname>SharePoint library</tagname>
+			<tagname>SharePoint libraries</tagname>
 		</ptags>
 		<tags>
 			<tagname>Power Automate</tagname>
@@ -768,12 +810,10 @@
 		</name>
 		<url>https://www.beyondintranet.com/pdf/ATCC-migration.pdf</url>
 		<ptags>
-			<tagname>Migration</tagname>
+			<tagname>Nintex Migration</tagname>
 			<tagname>Nintex</tagname>
+			<tagname>Nintex Forms</tagname>
 			<tagname>biological research </tagname>
-			<tagname>SharePoint On-premises to Sharepoint Online</tagname>
-			<tagname>Sharepoint Online</tagname>
-			<tagname>SharePoint On-premises</tagname>
 		</ptags>
 		<tags>
 			<tagname>SharePoint Migration</tagname>
@@ -845,12 +885,14 @@
 		<url>https://www.beyondintranet.com/pdf/vendorOnboarding.pdf</url>
 		<ptags>
 			<tagname>collaboration and communication</tagname>
+			<tagname>Employee Hiring</tagname>
 			<tagname>work engagement</tagname>
 			<tagname>biological research </tagname>
 			<tagname>document automation </tagname>
 			<tagname>Employee Onboarding</tagname>
 			<tagname>Onboarding</tagname>
 			<tagname>Offboarding</tagname>
+			<tagname>onboarding &amp; offboarding</tagname>
 		</ptags>
 		<tags>
 			<tagname>Employee Onboarding</tagname>
@@ -945,7 +987,8 @@
 		<url>https://www.beyondintranet.com/pdf/volunteerOnboarding.pdf</url>
 		<ptags>
 			<tagname>Employee Onboarding</tagname>
-			<tagname>SharePoint</tagname>
+			<tagname>Employee Hiring</tagname>
+			<tagname>Onboarding</tagname>
 		</ptags>
 		<tags>
 			<tagname>Employee Onboarding</tagname>
@@ -1022,7 +1065,10 @@
 			<tagname>OCR-based AI</tagname>
 			<tagname>invoice</tagname>
 			<tagname>automation</tagname>
-			<tagname>Sharepoint</tagname>
+			<tagname>Microsoft 365</tagname>
+			<tagname>M365 Consulting</tagname>
+			<tagname>M365</tagname>
+			<tagname>SharePoint document</tagname>
 		</ptags>
 		<tags>
 			<tagname>Power Automate</tagname>
@@ -1103,6 +1149,8 @@
 			<tagname>Document</tagname>
 			<tagname>Collaboration</tagname>
 			<tagname>Document Search</tagname>
+			<tagname>Document Management System</tagname>
+			<tagname>Document Management</tagname>
 			<tagname>Intranet</tagname>
 			<tagname>Sharepoint Intranet</tagname>
 		</ptags>
@@ -1175,6 +1223,7 @@
 		<ptags>
 			<tagname>SharePoint</tagname>
 			<tagname>Document Management</tagname>
+			<tagname>Document Management System</tagname>
 			<tagname>Document Security</tagname>
 			<tagname>Intranet</tagname>
 			<tagname>Sharepoint Intranet</tagname>
@@ -1234,7 +1283,7 @@
 		</name>
 		<url>https://www.beyondintranet.com/pdf/JSC-Consultants.pdf</url>
 		<ptags>
-			<tagname>SharePoint</tagname>
+			<tagname>SharePoint Document</tagname>
 			<tagname>Document Management</tagname>
 			<tagname>Risk Management</tagname>
 			<tagname>RMS</tagname>
@@ -1303,7 +1352,19 @@
 			<tagname>Power BI</tagname>
 			<tagname>visual dashboard</tagname>
 			<tagname>Dashboard</tagname>
-		
+			<tagname>Power BI Development</tagname>
+			<tagname>Power BI Implementation</tagname>
+			<tagname>BI Analytics</tagname>
+			<tagname>Power BI use cases</tagname>
+			<tagname>Data Integration Tools</tagname>
+			<tagname>Power BI SharePoint Integration</tagname>
+			<tagname>Power BI Dashboards</tagname>
+			<tagname>BI Dashboards</tagname>
+			<tagname>Microsoft Power BI Consulting Services</tagname>
+			<tagname>Power BI Consultation</tagname>
+			<tagname>Power BI Integration Services</tagname>
+			<tagname>BI Dashboards Development</tagname>
+			<tagname>BI Embedded Services</tagname>
 		</ptags>
 		<tags>
 			<tagname>Power BI</tagname>
@@ -1376,7 +1437,7 @@
 			<tagname>Manufacturing Test Flow Dashboard</tagname>
 			<tagname>Location-wise summary dashboard</tagname>
 			<tagname>www.beyondintranet.com</tagname>
-			
+
 
 		</tags>
 	</item>
@@ -1387,6 +1448,21 @@
 		<url>https://www.beyondintranet.com/pdf/power-bi-dashboards-for-resource-management.pdf</url>
 		<ptags>
 			<tagname>Power BI</tagname>
+			<tagname>visual dashboard</tagname>
+			<tagname>Dashboard</tagname>
+			<tagname>Power BI Development</tagname>
+			<tagname>Power BI Implementation</tagname>
+			<tagname>BI Analytics</tagname>
+			<tagname>Power BI use cases</tagname>
+			<tagname>Data Integration Tools</tagname>
+			<tagname>Power BI SharePoint Integration</tagname>
+			<tagname>Power BI Dashboards</tagname>
+			<tagname>BI Dashboards</tagname>
+			<tagname>Microsoft Power BI Consulting Services</tagname>
+			<tagname>Power BI Consultation</tagname>
+			<tagname>Power BI Integration Services</tagname>
+			<tagname>BI Dashboards Development</tagname>
+			<tagname>BI Embedded Services</tagname>
 			<tagname>visual dashboard</tagname>
 			<tagname>Dashboard</tagname>
 			<tagname>Resource Allocation</tagname>
@@ -1475,6 +1551,7 @@
 		<url>https://www.beyondintranet.com/pdf/microsoft-teams-to-improve-teams-collaboration.pdf</url>
 		<ptags>
 			<tagname>Microsoft Teams</tagname>
+			<tagname>Teams Consulting Services</tagname>
 			<tagname>MS Teams</tagname>
 			<tagname>collaborations</tagname>
 			<tagname>file sharing</tagname>
@@ -1571,10 +1648,10 @@
 		<url>https://www.beyondintranet.com/pdf/migrationSharePoint.pdf</url>
 		<ptags>
 			<tagname>SharePoint Migration</tagname>
-			<tagname>Cloud</tagname>
+			<tagname>SharePoint Cloud</tagname>
+			<tagname>SharePoint Development</tagname>
 			<tagname>collaborations</tagname>
-			<tagname>intranet</tagname>
-			<tagname>Migration</tagname>
+			<tagname>SharePoint intranet</tagname>
 		</ptags>
 		<tags>
 			<tagname>SharePoint Migration</tagname>
@@ -1630,12 +1707,14 @@
 		</name>
 		<url>https://www.beyondintranet.com/pdf/dms-casestudy.pdf</url>
 		<ptags>
-			<tagname>SharePoint</tagname>
+			<tagname>SharePoint Document</tagname>
+			<tagname>SharePoint Document Library</tagname>
+			<tagname>Document Library</tagname>
 			<tagname>Document Management</tagname>
 			<tagname>document storage and sharing process</tagname>
 			<tagname>user permissions</tagname>
 			<tagname>Document Library</tagname>
-			<tagname>Document</tagname>
+			<tagname>Document Management System</tagname>
 		</ptags>
 		<tags>
 			<tagname>Document Management</tagname>
@@ -1691,6 +1770,9 @@
 			<tagname>training</tagname>
 			<tagname>employee collaboration</tagname>
 			<tagname>workforce planning</tagname>
+			<tagname>directory</tagname>
+			<tagname>staff directory</tagname>
+			<tagname>people directory</tagname>
 		</ptags>
 		<tags>
 			<tagname>Employee Directory</tagname>
@@ -1758,6 +1840,8 @@
 		<url>https://www.beyondintranet.com/pdf/Bid-Management.pdf</url>
 		<ptags>
 			<tagname>Bid Management</tagname>
+			<tagname>Bid Management System</tagname>
+			<tagname>Bid Management Software</tagname>
 			<tagname>Sharepoint</tagname>
 			<tagname>RFPs</tagname>
 			<tagname>RDP</tagname>
@@ -1825,9 +1909,22 @@
 			<tagname>safety and wellness</tagname>
 			<tagname>attendance system</tagname>
 			<tagname>pickup and drop</tagname>
-			<tagname>SharePoint</tagname>
-			<tagname>Power BI Enabled Reports</tagname>
+			<tagname>Power BI Development</tagname>
+			<tagname>Power BI Implementation</tagname>
+			<tagname>BI Analytics</tagname>
 			<tagname>Power BI</tagname>
+			<tagname>Power BI use cases</tagname>
+			<tagname>Data Integration Tools</tagname>
+			<tagname>Power BI SharePoint Integration</tagname>
+			<tagname>Power BI Dashboards</tagname>
+			<tagname>BI Dashboards</tagname>
+			<tagname>Microsoft Power BI Consulting Services</tagname>
+			<tagname>Power BI Consultation</tagname>
+			<tagname>Power BI Integration Services</tagname>
+			<tagname>BI Dashboards Development</tagname>
+			<tagname>BI Embedded Services</tagname>
+			<tagname>dashboard</tagname>
+			
 		</ptags>
 		<tags>
 			<tagname>PowerApps</tagname>
@@ -1878,9 +1975,10 @@
 		<url>https://www.beyondintranet.com/pdf/NurseOnboarding.pdf</url>
 		<ptags>
 			<tagname>Employee Onboarding</tagname>
+			<tagname>Employee Hiring</tagname>
 			<tagname>Healthcare</tagname>
 			<tagname>Hospital</tagname>
-			<tagname>Nurse</tagname>
+			<tagname>Nurse Hiring</tagname>
 			<tagname>Sharepoint onboarding</tagname>
 			<tagname>Medical staff</tagname>
 			<tagname>local staff</tagname>
@@ -1943,11 +2041,7 @@
 		<ptags>
 			<tagname>Employee Onboarding</tagname>
 			<tagname>Student Onboarding</tagname>
-			<tagname>Education</tagname>
-			<tagname>Nurse</tagname>
 			<tagname>Sharepoint onboarding</tagname>
-			<tagname>offboarding</tagname>
-			<tagname>local staff</tagname>
 			<tagname>student verification</tagname>
 			<tagname>Admission</tagname>
 		</ptags>
@@ -2014,7 +2108,6 @@
 			<tagname>lawyer</tagname>
 			<tagname>document management</tagname>
 			<tagname>Automation</tagname>
-			
 		</ptags>
 		<tags>
 			<tagname>SharePoint</tagname>
@@ -2070,11 +2163,11 @@
 		</name>
 		<url>https://www.beyondintranet.com/pdf/qsc.pdf</url>
 		<ptags>
-			<tagname>SharePoint</tagname>
-			<tagname>Intranet</tagname>
-			<tagname>Migration</tagname>
+			<tagname>SharePoint Development</tagname>
+			<tagname>SharePoint Intranet</tagname>
+			<tagname>Employee Hiring</tagname>
 			<tagname>Sharepoint Migration</tagname>
-			<tagname>Automation</tagname>
+			<tagname>Product Registration</tagname>
 			<tagname>Claim registration</tagname>
 
 		</ptags>
@@ -2175,8 +2268,8 @@
 		</name>
 		<url>https://www.beyondintranet.com/pdf/freuds.pdf</url>
 		<ptags>
-			<tagname>SharePoint</tagname>
-			<tagname>Intranet</tagname>
+			<tagname>SharePoint Automation</tagname>
+			<tagname>Docusign</tagname>
 			<tagname>Contract Management</tagname>
 			<tagname>Automation</tagname>
 		</ptags>
@@ -2246,10 +2339,8 @@
 		</name>
 		<url>https://www.beyondintranet.com/pdf/healthcareKM.pdf</url>
 		<ptags>
-			<tagname>Knowledge</tagname>
+			<tagname>Knowledge Management</tagname>
 			<tagname>KMS</tagname>
-			<tagname>SharePoint</tagname>
-			<tagname>Intranet</tagname>
 			<tagname>Knowledge sharing</tagname>
 			<tagname>Knowledge repository</tagname>
 			<tagname>Knowledge base</tagname>
@@ -2303,7 +2394,7 @@
 		</name>
 		<url>https://www.beyondintranet.com/pdf/transtar.pdf</url>
 		<ptags>
-			<tagname>Knowledge</tagname>
+			<tagname>Knowledge Management</tagname>
 			<tagname>SharePoint</tagname>
 			<tagname>Intranet</tagname>
 			<tagname>Knowledge sharing</tagname>
@@ -2311,6 +2402,7 @@
 			<tagname>KMS</tagname>
 			<tagname>Data analytics</tagname>
 			<tagname>KM</tagname>
+			<tagname>Knowledge base</tagname>
 		</ptags>
 		<tags>
 			<tagname>Knowledge Management</tagname>
@@ -2350,5 +2442,5 @@
 
 		</tags>
 	</item>
-	
+
 </root>

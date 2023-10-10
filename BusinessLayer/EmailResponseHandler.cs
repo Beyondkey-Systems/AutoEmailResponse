@@ -49,29 +49,37 @@ namespace BusinessLayer
             return Url;
         }
 
-        private List<string> SearchKeywordsInCaseStudyXML(List<string> keywords, string xmlContent)
+        public List<string> SearchKeywordsInCaseStudyXML(List<string> keywords, string xmlContent)
         {
             XDocument xdoc = XDocument.Parse(xmlContent);
-            List<string> matchedUrls = new List<string>();
+            int maxMatches = 0;
+            List<string> matchedUrl = new List<string>();
 
+            // First, search in <ptags>
             foreach (var item in xdoc.Descendants("item"))
             {
                 IEnumerable<string> tags = item.Descendants("ptags").Descendants("tagname").Select(tag => tag.Value);
                 string combinedText = string.Join(" ", tags);
 
-                bool allKeywordsMatched = keywords.All(keyword =>
+                int matches = keywords.Sum(keyword =>
                 {
                     var matchesForKeyword = Regex.Matches(combinedText, @"\b" + Regex.Escape(keyword) + @"\b", RegexOptions.IgnoreCase);
-                    return matchesForKeyword.Count > 0;
+                    return matchesForKeyword.Count > 0 ? 1 : 0; // Consider each keyword match as 1
                 });
 
-                if (allKeywordsMatched)
+                if (matches > maxMatches)
                 {
-                    matchedUrls.Add(item.Element("url")?.Value);
+                    matchedUrl.Clear();
+                    maxMatches = matches;
+                    matchedUrl.Add(item.Element("url")?.Value);
                 }
+                if(matches==maxMatches)
+                    matchedUrl.Add(item.Element("url")?.Value);
             }
 
-            return matchedUrls;
+            if (matchedUrl.Count > 0) return matchedUrl; // If URL found in ptags, return it
+
+            return matchedUrl;
         }
 
 
