@@ -95,7 +95,7 @@ namespace EmailResponseApi.Controllers
 
                         customInstruction += _configuration["SampleResponse1"];
                         if (IsWebSiteUrlToShow)
-                            customInstruction += "In the meantime, please visit our <a href='https://www.beyondintranet.com/'>website</a> to learn more about our HR products.";
+                            customInstruction += " In the meantime, please visit our <a href='https://www.beyondintranet.com/'>website</a> to learn more about our HR products.";
                         if (IsCaseStudyToShow && CaseStudyFiles.Count == 1)
                             customInstruction += " Also please take a moment to review our comprehensive case study.";
                         if (IsCaseStudyToShow && CaseStudyFiles.Count > 1)
@@ -104,7 +104,7 @@ namespace EmailResponseApi.Controllers
 
                         customInstruction += _configuration["SampleResponse2"];
                         if (IsWebSiteUrlToShow)
-                            customInstruction += "In the meantime, please visit our <a href='https://www.beyondintranet.com/'>website</a> to learn more about our services.";
+                            customInstruction += " In the meantime, please visit our <a href='https://www.beyondintranet.com/'>website</a> to learn more about our services.";
                         if (IsCaseStudyToShow && CaseStudyFiles.Count == 1)
                             customInstruction += " Also please take a moment to review our comprehensive case study.";
                         if (IsCaseStudyToShow && CaseStudyFiles.Count > 1)
