@@ -46,7 +46,7 @@ namespace EmailResponseApi.Controllers
             try
             {
                 var apiKey = _configuration["apiKey"];
-                
+
 
                 inputText = "Name: " + FullName + "|" + Regex.Replace(inputText, @"\s+", " ").Trim();
                 string formattedText = $"Text: \"\"\"\n{inputText}\n\"\"\"";
@@ -73,7 +73,7 @@ namespace EmailResponseApi.Controllers
                         bool IsWebSiteUrlToShow = EmailResponseHandler.IsWebSiteUrlToShow(MatchedKeywords, xmlDocument);
                         //write code for isCaseStudyToShare, isWebsiteUrlToShare
 
-                        
+
                         customInstruction = _configuration["CustomInstructionBeyondIntranet1"] + " ";
                         customInstruction += "For 'Product' inquiries, i can be asked about specific products like 'HR Directory,' 'Organizational Chart,' etc or similar kind of products., and I'll provide relevant links as specified here. ";
                         var products = _configuration.GetSection("BeyondIntranetProducts");
@@ -85,31 +85,30 @@ namespace EmailResponseApi.Controllers
 
                         string Domain = EmailResponseHandler.GetDomainFromEmail(Email);
                         EmailResponseHandler emailResponseHandler = new EmailResponseHandler();
-                        CaseStudyFiles = await emailResponseHandler.FindCaseStudy(contentRootPath,apiKey, Domain, inputText);
+                        CaseStudyFiles = await emailResponseHandler.FindCaseStudy(contentRootPath, apiKey, Domain, inputText);
 
-                        if (IsCaseStudyToShow)
-                        {
-                            if (CaseStudyFiles.Count == 1)
-                                customInstruction += $"Should always force to take a moment to review relevant case study.";
-                            if (CaseStudyFiles.Count > 1)
-                                customInstruction += $"Should always suggest to take a moment to review our case studies. ";
-                            customInstruction += _configuration["CustomInstructionBeyondIntranet3"];
-                            customInstruction += _configuration["SampleResponse1"];
-                            if (CaseStudyFiles.Count == 1)
-                                customInstruction += "Meanwhile please take a moment to review our comprehensive case study.";
-                            if (CaseStudyFiles.Count > 1)
-                                customInstruction += "Meanwhile please take a moment to review our case studies.";
-                        }
+                        if (IsCaseStudyToShow && CaseStudyFiles.Count == 1)
+                            customInstruction += $"Should always force to take a moment to review relevant case study.";
+                        if (IsCaseStudyToShow && CaseStudyFiles.Count > 1)
+                            customInstruction += $"Should always suggest to take a moment to review our case studies. ";
+                        customInstruction += _configuration["CustomInstructionBeyondIntranet3"];
+
+                        customInstruction += _configuration["SampleResponse1"];
+                        if (IsWebSiteUrlToShow)
+                            customInstruction += "In the meantime, please visit our <a href='https://www.beyondintranet.com/'>website</a> to learn more about our HR products.";
+                        if (IsCaseStudyToShow && CaseStudyFiles.Count == 1)
+                            customInstruction += " Also please take a moment to review our comprehensive case study.";
+                        if (IsCaseStudyToShow && CaseStudyFiles.Count > 1)
+                            customInstruction += " Also please take a moment to review our case studies.";
                         customInstruction += "<br/><br/>Best Regards,<br/>Beyond Intranet";
 
                         customInstruction += _configuration["SampleResponse2"];
-                        if (IsCaseStudyToShow)
-                        {
-                            if (CaseStudyFiles.Count == 1)
-                                customInstruction += "Meanwhile please take a moment to review our comprehensive case study.";
-                            if (CaseStudyFiles.Count > 1)
-                                customInstruction += "Meanwhile please take a moment to review our case studies.";
-                        }
+                        if (IsWebSiteUrlToShow)
+                            customInstruction += "In the meantime, please visit our <a href='https://www.beyondintranet.com/'>website</a> to learn more about our services.";
+                        if (IsCaseStudyToShow && CaseStudyFiles.Count == 1)
+                            customInstruction += " Also please take a moment to review our comprehensive case study.";
+                        if (IsCaseStudyToShow && CaseStudyFiles.Count > 1)
+                            customInstruction += " Also please take a moment to review our case studies.";
                         customInstruction += "<br/><br/>Best Regards,<br/>Beyond Intranet";
                     }
                     else
