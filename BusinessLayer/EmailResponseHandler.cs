@@ -82,13 +82,9 @@ namespace BusinessLayer
             return matchedUrl;
         }
 
-        public static async Task<List<string>> ExtractMatchedKeywords(string contentRootPath, string apiKey, string inputText)
+        public static async Task<List<string>> ExtractMatchedKeywords(XDocument xmlDocument, string apiKey, string inputText)
         {
-            string relativeFilePath = "DB/Keyword.xml";
-            string physicalFilePath = Path.Combine(contentRootPath, relativeFilePath);
             List<string> masterKeywords = new List<string>();
-            XDocument xmlDocument = XDocument.Load(physicalFilePath);
-
             foreach (XElement category in xmlDocument.Root.Elements())
             {
                 foreach (XElement keywordElement in category.Elements("tagname"))
@@ -100,42 +96,41 @@ namespace BusinessLayer
 
             // Initialize the OpenAI API client
             var openAiApi = new OpenAIAPI(apiKey);
+            string Prompt = $"Analyse the below text and extract key information\nText: {inputText}\n\nBased on key information, find a maximum of 2 relevant matched keywords from below keyword list in comma-separated desired format:\n###desired format###:Keyword1, Keyword2\n\nif not matching keyword found then return 'Other'\n\nKeyword list:\n{string.Join("\n", masterKeywords)}\n do not share more than 2 keywords";
+            
 
             // Analyze the content using OpenAI
             var response = await openAiApi.Completions.CreateCompletionAsync(new CompletionRequest()
             {
                 Model = "text-davinci-003",
                 Temperature = 0.1,
-                MaxTokens = 50, // Adjust this value as needed
-                Prompt = $"Analyze the following text and provide key information:\n\nText: \"{inputText}\"\n\nPlease provide key details."
+                MaxTokens = 100, // Adjust this value as needed
+                Prompt = Prompt
             });
 
             // Extracted information from the OpenAI analysis
             string extractedInfo = response.Completions[0].Text;
 
-            // Split the extracted information into words
-            string[] extractedWords = extractedInfo.Split(new[] { ' ', ',', '.', ';', '!', '?', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            // Tokenize the extracted information into words
+            string[] extractedWords = extractedInfo.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                                      .Select(word => word.Trim())
+                                      .ToArray();
 
-            // Find keywords that contain any word from extractedWords
-            List<string> matchedKeywords = new List<string>();
 
-            foreach (var extractedWord in extractedWords)
+            //List<string> matchedKeywords = masterKeywords
+            //.Where(keyword => masterKeywords.Any(masterKeyword => extractedWords.Contains(masterKeyword, StringComparer.OrdinalIgnoreCase)))
+            //.ToList();
+
+            if (extractedWords.Any())
             {
-                var matchingKeywords = masterKeywords.Where(keyword =>
-                    keyword.IndexOf(extractedWord, StringComparison.OrdinalIgnoreCase) >= 0);
-
-                matchedKeywords.AddRange(matchingKeywords);
-            }
-
-            if (matchedKeywords.Any())
-            {
-                return matchedKeywords.Distinct().ToList();
+                return extractedWords.Distinct().ToList();
             }
             else
             {
                 return new List<string> { "Other" };
             }
         }
+
 
 
 
@@ -321,7 +316,7 @@ namespace BusinessLayer
             var openAiApi = new OpenAI_API.OpenAIAPI(apiKey);
 
             // Prompt for OpenAI to determine if the text is career-related
-            string prompt = $"Is the following text related to a career or occupation?\n\nText: \"{inputText}\"\n\nPlease respond with 'Yes' or 'No'.";
+            string prompt = $"Please analyze the following text and determine if it is related to career, job inquiry, job vacancy, job opening, or searching for a job role:\n\nText: \"{inputText}\"\n\nProvide a 'Yes' or 'No' response.";
 
 
             var response = await openAiApi.Completions.CreateCompletionAsync(new CompletionRequest()
@@ -336,7 +331,7 @@ namespace BusinessLayer
             string responseText = response.Completions[0].Text.Trim().ToLower();
 
             // Check if the response indicates 'Yes' for career-related
-            return responseText == "yes";
+            return responseText.Contains("yes");
         }
         public static async Task<List<string>> ExtractKeywordsfromDomain(string apiKey, string Domain)
         {

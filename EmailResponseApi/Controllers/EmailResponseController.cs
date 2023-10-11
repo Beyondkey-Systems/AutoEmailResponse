@@ -64,14 +64,12 @@ namespace EmailResponseApi.Controllers
                     if (WebsiteURL.Trim().Contains("beyondintranet"))
                     {
                         string contentRootPath = _environment.ContentRootPath;
-                        //review code for matched keyword, remove logic for contain
-                        var MatchedKeywords = await EmailResponseHandler.ExtractMatchedKeywords(contentRootPath, apiKey, inputText);
-
                         string relativeFilePath = "DB/Keyword.xml";
 
                         // Combine the content root path with the relative file path
                         string physicalFilePath = Path.Combine(contentRootPath, relativeFilePath);
                         XDocument xmlDocument = XDocument.Load(physicalFilePath);
+                        var MatchedKeywords = await EmailResponseHandler.ExtractMatchedKeywords(xmlDocument, apiKey, inputText);
                         bool IsCaseStudyToShow = EmailResponseHandler.IsCaseStudyToShow(MatchedKeywords, xmlDocument);
                         bool IsWebSiteUrlToShow = EmailResponseHandler.IsWebSiteUrlToShow(MatchedKeywords, xmlDocument);
                         if (IsCaseStudyToShow == false && IsWebSiteUrlToShow == false)
@@ -193,7 +191,7 @@ namespace EmailResponseApi.Controllers
         }
         private CustomResponse GetDefaultResponse(string FullName,bool IsCareerRelated)
         {
-            string DefaultResponse = "Hello " + FullName + ",<br/><br/>Thank you for reaching out to us with your Inquiry. We appreciate your interest.<br/><br/>Your query is important to us, and we want to ensure we provide you with the best possible information and assistance. Our dedicated team is currently reviewing your request, and you can expect to hear back from us shortly.";
+            string DefaultResponse = "Hello " + FullName + ",<br/><br/>Thank you for reaching out to us. We appreciate your interest.<br/><br/>Your query is important to us, and we want to ensure we provide you with the best possible information and assistance. Our dedicated team is currently reviewing your request, and you can expect to hear back from us shortly.";
             DefaultResponse += "<br/><br/>Best Regards,<br/>Beyond Intranet";
             DefaultResponse += _configuration["DisplayPoweredByBKChatbot"] == "True" ? $" <br/><br/><span style=\"font-size: 10px; font-family: 'Helvetica Neue';\">[Powered by Beyond Key Chatbot]</span>" : string.Empty;
             DefaultResponse += _configuration["DisplayCautionText"] == "True" ? $" <br/><span style=\"font-size: 10px; font-family: 'Helvetica Neue';\">{_configuration["CautionText"]}</span>" : string.Empty;
