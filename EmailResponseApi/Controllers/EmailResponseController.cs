@@ -23,7 +23,7 @@ namespace EmailResponseApi.Controllers
     {
         public HttpStatusCode StatusCode { get; set; }
         public string Content { get; set; }
-        public bool IsCareerRelated {get;set; }
+        public bool IsCareerRelated { get; set; }
     }
 
     [Route("api/[controller]")]
@@ -33,6 +33,7 @@ namespace EmailResponseApi.Controllers
         private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _environment;
         private List<string> CaseStudyFiles;
+        private bool IsBeyondIntranet;
 
         public EmailResponseController(IWebHostEnvironment environment, IConfiguration configuration)
         {
@@ -46,6 +47,7 @@ namespace EmailResponseApi.Controllers
         {
             try
             {
+                IsBeyondIntranet = WebsiteURL.Trim().Contains("beyondintranet") ? true : false;
                 var apiKey = _configuration["apiKey"];
 
 
@@ -59,9 +61,9 @@ namespace EmailResponseApi.Controllers
                 {
                     var request = new HttpRequestMessage(HttpMethod.Post, endpoint);
                     request.Headers.Add("Authorization", $"Bearer {apiKey}");
-                    
+
                     var customInstruction = string.Empty;
-                    if (WebsiteURL.Trim().Contains("beyondintranet"))
+                    if (IsBeyondIntranet)
                     {
                         string contentRootPath = _environment.ContentRootPath;
                         string relativeFilePath = "DB/Keyword.xml";
@@ -73,7 +75,11 @@ namespace EmailResponseApi.Controllers
                         bool IsCaseStudyToShow = EmailResponseHandler.IsCaseStudyToShow(MatchedKeywords, xmlDocument);
                         bool IsWebSiteUrlToShow = EmailResponseHandler.IsWebSiteUrlToShow(MatchedKeywords, xmlDocument);
                         if (IsCaseStudyToShow == false && IsWebSiteUrlToShow == false)
-                            return  GetDefaultResponse(FullName, isCareerRelated);
+                        {
+                            var defaultResponse = GetDefaultResponse(FullName, isCareerRelated, IsBeyondIntranet);
+                            SendEmail(defaultResponse);
+                            return defaultResponse;
+                        }
 
                         customInstruction = _configuration["CustomInstructionBeyondIntranet1"] + " ";
                         customInstruction += "For 'Product' inquiries, i can be asked about specific products like 'HR Directory,' 'Organizational Chart,' etc or similar kind of products., and I'll provide relevant links as specified here. ";
@@ -148,7 +154,7 @@ namespace EmailResponseApi.Controllers
                         if (firstChoice != null)
                         {
                             var content = firstChoice["message"]["content"].ToString();
-                            if (WebsiteURL.Trim().Contains("beyondintranet"))
+                            if (IsBeyondIntranet)
                             {
                                 if (CaseStudyFiles.Count == 1)
                                     content = Regex.Replace(content, @"(<case study>|case study|casestudy)", $"<a href='{CaseStudyFiles[0]}'>$1</a>", RegexOptions.IgnoreCase);
@@ -167,14 +173,14 @@ namespace EmailResponseApi.Controllers
 
                     // Serialize the updated JSON back to a string
                     responseContent = jsonResponse.ToString();
-                    
+
                     var customResponse = new CustomResponse
                     {
                         StatusCode = response.StatusCode,
                         Content = responseContent,
-                        IsCareerRelated= isCareerRelated
+                        IsCareerRelated = isCareerRelated
                     };
-                    //SendEmail(customResponse);
+                    SendEmail(customResponse);
                     return customResponse;
                 }
             }
@@ -185,24 +191,61 @@ namespace EmailResponseApi.Controllers
                 {
                     StatusCode = HttpStatusCode.InternalServerError,
                     Content = "An error occurred while processing the request.",
-                    IsCareerRelated= false
+                    IsCareerRelated = false
                 };
             }
         }
-        private CustomResponse GetDefaultResponse(string FullName,bool IsCareerRelated)
+        private CustomResponse GetDefaultResponse(string FullName, bool IsCareerRelated,bool isBeyondIntranet)
         {
-            string DefaultResponse = "Hello " + FullName + ",<br/><br/>Thank you for reaching out to us. We appreciate your interest.<br/><br/>Your query is important to us, and we want to ensure we provide you with the best possible information and assistance. Our dedicated team is currently reviewing your request, and you can expect to hear back from us shortly.";
-            DefaultResponse += "<br/><br/>Best Regards,<br/>Beyond Intranet";
+            string DefaultResponse = $"Hello {FullName},<br/><br/>Thank you for reaching out to us. We appreciate your interest.";
+            DefaultResponse += "<br/><br/>Your query is important to us, and we want to ensure we provide you with the best possible information and assistance. Our dedicated team is currently reviewing your request, and you can expect to hear back from us shortly.";
+            DefaultResponse += isBeyondIntranet ? "<br/><br/>Best Regards,<br/>Beyond Intranet": "<br/><br/>Best Regards,<br/>Beyondkey Systems";
             DefaultResponse += _configuration["DisplayPoweredByBKChatbot"] == "True" ? $" <br/><br/><span style=\"font-size: 10px; font-family: 'Helvetica Neue';\">[Powered by Beyond Key Chatbot]</span>" : string.Empty;
             DefaultResponse += _configuration["DisplayCautionText"] == "True" ? $" <br/><span style=\"font-size: 10px; font-family: 'Helvetica Neue';\">{_configuration["CautionText"]}</span>" : string.Empty;
-            var defaultResponse = new CustomResponse
+
+            // Create the JSON response structure
+            var jsonResponse = new
             {
-                StatusCode = HttpStatusCode.OK, // Use a success status code (e.g., HttpStatusCode.OK)
-                Content = DefaultResponse,
-                IsCareerRelated= IsCareerRelated
+                id = "chatcmpl-88Vs3lMmNLG6cEZ3v4ntKFqUOiz3H",
+                @object = "chat.completion",
+                created = 1697039827, // You can set this timestamp to the desired value
+                model = "gpt-3.5-turbo-0613",
+                choices = new[]
+                {
+                    new
+                    {
+                        index = 0,
+                        message = new
+                        {
+                            role = "assistant",
+                            content = DefaultResponse
+                        },
+                        finish_reason = "stop"
+                    }
+                },
+                usage = new
+                {
+                    prompt_tokens = 100,
+                    completion_tokens = 150,
+                    total_tokens = 250
+                }
             };
-            return defaultResponse;
+
+            // Serialize the JSON response to a string
+            var jsonResponseString = JsonConvert.SerializeObject(jsonResponse);
+
+            // Create a CustomResponse object and assign the JSON response as its content
+            var customResponse = new CustomResponse
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content = jsonResponseString, // Assign the JSON response string
+                IsCareerRelated = IsCareerRelated
+            };
+
+            return customResponse;
         }
+
+
         private string RemoveIgnoredKeywords(string Content)
         {
             string[] ignoreKeywords = _configuration.GetSection("IgnoreKeywords").Get<string[]>();
