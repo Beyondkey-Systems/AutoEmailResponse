@@ -53,16 +53,18 @@ namespace EmailResponseApi.Controllers
                 string formattedText = $"Text: \"\"\"\n{inputText}\n\"\"\"";
 
                 var endpoint = "https://api.openai.com/v1/chat/completions";
-
+                //functionality for isCareerRelated is common for both Beyondkey and Beyondintranet
+                bool isCareerRelated = await EmailResponseHandler.IsCareerRelated(apiKey, inputText);
                 using (var client = new HttpClient())
                 {
                     var request = new HttpRequestMessage(HttpMethod.Post, endpoint);
                     request.Headers.Add("Authorization", $"Bearer {apiKey}");
-
+                    
                     var customInstruction = string.Empty;
                     if (WebsiteURL.Trim().Contains("beyondintranet"))
                     {
                         string contentRootPath = _environment.ContentRootPath;
+                        //review code for matched keyword, remove logic for contain
                         var MatchedKeywords = await EmailResponseHandler.ExtractMatchedKeywords(contentRootPath, apiKey, inputText);
 
                         string relativeFilePath = "DB/Keyword.xml";
@@ -73,7 +75,7 @@ namespace EmailResponseApi.Controllers
                         bool IsCaseStudyToShow = EmailResponseHandler.IsCaseStudyToShow(MatchedKeywords, xmlDocument);
                         bool IsWebSiteUrlToShow = EmailResponseHandler.IsWebSiteUrlToShow(MatchedKeywords, xmlDocument);
                         if (IsCaseStudyToShow == false && IsWebSiteUrlToShow == false)
-                            return  GetDefaultResponse(FullName);
+                            return  GetDefaultResponse(FullName, isCareerRelated);
 
                         customInstruction = _configuration["CustomInstructionBeyondIntranet1"] + " ";
                         customInstruction += "For 'Product' inquiries, i can be asked about specific products like 'HR Directory,' 'Organizational Chart,' etc or similar kind of products., and I'll provide relevant links as specified here. ";
@@ -167,8 +169,7 @@ namespace EmailResponseApi.Controllers
 
                     // Serialize the updated JSON back to a string
                     responseContent = jsonResponse.ToString();
-                    //functionality for isCareerRelated is common for both Beyondkey and Beyondintranet
-                    bool isCareerRelated =await EmailResponseHandler.IsCareerRelated(apiKey, inputText);
+                    
                     var customResponse = new CustomResponse
                     {
                         StatusCode = response.StatusCode,
@@ -190,7 +191,7 @@ namespace EmailResponseApi.Controllers
                 };
             }
         }
-        private CustomResponse GetDefaultResponse(string FullName)
+        private CustomResponse GetDefaultResponse(string FullName,bool IsCareerRelated)
         {
             string DefaultResponse = "Hello " + FullName + ",<br/><br/>Thank you for reaching out to us with your Inquiry. We appreciate your interest.<br/><br/>Your query is important to us, and we want to ensure we provide you with the best possible information and assistance. Our dedicated team is currently reviewing your request, and you can expect to hear back from us shortly.";
             DefaultResponse += "<br/><br/>Best Regards,<br/>Beyond Intranet";
@@ -200,7 +201,7 @@ namespace EmailResponseApi.Controllers
             {
                 StatusCode = HttpStatusCode.OK, // Use a success status code (e.g., HttpStatusCode.OK)
                 Content = DefaultResponse,
-                IsCareerRelated= false
+                IsCareerRelated= IsCareerRelated
             };
             return defaultResponse;
         }

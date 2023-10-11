@@ -84,15 +84,11 @@ namespace BusinessLayer
 
         public static async Task<List<string>> ExtractMatchedKeywords(string contentRootPath, string apiKey, string inputText)
         {
-
             string relativeFilePath = "DB/Keyword.xml";
-
-            // Combine the content root path with the relative file path
             string physicalFilePath = Path.Combine(contentRootPath, relativeFilePath);
             List<string> masterKeywords = new List<string>();
             XDocument xmlDocument = XDocument.Load(physicalFilePath);
 
-            // Iterate through XML elements and add keywords to the list
             foreach (XElement category in xmlDocument.Root.Elements())
             {
                 foreach (XElement keywordElement in category.Elements("tagname"))
@@ -117,22 +113,31 @@ namespace BusinessLayer
             // Extracted information from the OpenAI analysis
             string extractedInfo = response.Completions[0].Text;
 
-
             // Split the extracted information into words
             string[] extractedWords = extractedInfo.Split(new[] { ' ', ',', '.', ';', '!', '?', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
-            // Find keywords that match the master list (case-insensitive)
-            var matchedKeywords = extractedWords
-            .Where(word => masterKeywords.Any(keyword => keyword.IndexOf(word, StringComparison.OrdinalIgnoreCase) >= 0))
-            .ToList();
+            // Find keywords that contain any word from extractedWords
+            List<string> matchedKeywords = new List<string>();
 
+            foreach (var extractedWord in extractedWords)
+            {
+                var matchingKeywords = masterKeywords.Where(keyword =>
+                    keyword.IndexOf(extractedWord, StringComparison.OrdinalIgnoreCase) >= 0);
 
+                matchedKeywords.AddRange(matchingKeywords);
+            }
 
             if (matchedKeywords.Any())
-                return matchedKeywords;
+            {
+                return matchedKeywords.Distinct().ToList();
+            }
             else
+            {
                 return new List<string> { "Other" };
+            }
         }
+
+
 
 
         /*
@@ -316,13 +321,14 @@ namespace BusinessLayer
             var openAiApi = new OpenAI_API.OpenAIAPI(apiKey);
 
             // Prompt for OpenAI to determine if the text is career-related
-            string prompt = $"Is the following text career-related?\n\nText: \"{inputText}\"\n\nPlease respond with 'Yes' or 'No'.";
+            string prompt = $"Is the following text related to a career or occupation?\n\nText: \"{inputText}\"\n\nPlease respond with 'Yes' or 'No'.";
+
 
             var response = await openAiApi.Completions.CreateCompletionAsync(new CompletionRequest()
             {
                 Model = "text-davinci-003",
                 Temperature = 0.1,
-                MaxTokens = 1, // Limit response to a single token (Yes or No)
+                MaxTokens = 10, // Limit response to a single token (Yes or No)
                 Prompt = prompt
             });
 
