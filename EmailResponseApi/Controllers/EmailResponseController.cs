@@ -101,9 +101,9 @@ namespace EmailResponseApi.Controllers
                         EmailResponseHandler emailResponseHandler = new EmailResponseHandler();
                         CaseStudyFiles = await emailResponseHandler.FindCaseStudy(contentRootPath, apiKey, Domain, inputText);
 
-                        if (IsCaseStudyToShow && CaseStudyFiles.Count == 1)
+                        if (IsCaseStudyToShow && CaseStudyFiles.Count > 0 && CaseStudyFiles.Count <= 3)
                             customInstruction += $"Should always force to take a moment to review relevant case study.";
-                        if (IsCaseStudyToShow && CaseStudyFiles.Count > 1)
+                        if (IsCaseStudyToShow && CaseStudyFiles.Count > 3)
                             customInstruction += $"Should always suggest to take a moment to review our case studies. ";
                         customInstruction += _configuration["CustomInstructionBeyondIntranet3"];
 
@@ -119,9 +119,9 @@ namespace EmailResponseApi.Controllers
                         customInstruction += _configuration["SampleResponse2"];
                         if (IsWebSiteUrlToShow)
                             customInstruction += " In the meantime, please visit our <a href='https://www.beyondintranet.com/'>website</a> to learn more about our services.";
-                        if (IsCaseStudyToShow && CaseStudyFiles.Count == 1)
+                        if (IsCaseStudyToShow && CaseStudyFiles.Count > 0 && CaseStudyFiles.Count <= 3)
                             customInstruction += " Also please take a moment to review our comprehensive case study.";
-                        if (IsCaseStudyToShow && CaseStudyFiles.Count > 1)
+                        if (IsCaseStudyToShow && CaseStudyFiles.Count > 3)
                             customInstruction += " Also please take a moment to review our case studies.";
                         customInstruction += "<br/><br/>Best Regards,<br/>Beyond Intranet";
                     }
@@ -167,9 +167,7 @@ namespace EmailResponseApi.Controllers
                             var content = firstChoice["message"]["content"].ToString();
                             if (IsBeyondIntranet)
                             {
-                                if (CaseStudyFiles.Count == 1)
-                                    content = Regex.Replace(content, @"(<case study>|case study|casestudy)", $"<a href='{CaseStudyFiles[0]}'>$1</a>", RegexOptions.IgnoreCase);
-
+                                content = Regex.Replace(content, @"(<case study>|case study|casestudy)", $"<a href='{CaseStudyFiles[0]}'>$1</a>", RegexOptions.IgnoreCase);
                                 content = Regex.Replace(content, @"(case studies|casestudies|case-studies)", "<a href='https://www.beyondintranet.com/customer-stories'>$1</a>", RegexOptions.IgnoreCase);
                             }
                             content += _configuration["DisplayPoweredByBKChatbot"] == "True" ? $" <br/><br/><span style=\"font-size: 10px; font-family: 'Helvetica Neue';\">[Powered by Beyond Key Chatbot]</span>" : string.Empty;
