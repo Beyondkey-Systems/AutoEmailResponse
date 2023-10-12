@@ -28,24 +28,12 @@ namespace BusinessLayer
             string physicalFilePath = Path.Combine(contentRootPath, relativeFilePath);
             string xmlContent = System.IO.File.ReadAllText(physicalFilePath);
 
-            var Domainkeywords = await EmailResponseHandler.ExtractKeywordsfromDomain(apiKey, Domain);
-            Domainkeywords = Domainkeywords
-            .SelectMany(keyword => keyword.Split(',').Select(trimmedKeyword => trimmedKeyword.Trim()))
-            .ToList();
-
             List<string> UserQueryKeywords = await EmailResponseHandler.ExtractKeywordsfromUserQuery(apiKey, inputText);
             UserQueryKeywords = UserQueryKeywords
            .SelectMany(keyword => keyword.Split(',').Select(trimmedKeyword => trimmedKeyword.Trim()))
            .ToList();
 
-            var UserQuery_DomainKeywords = UserQueryKeywords.Concat(Domainkeywords).ToList();
-
-            /*********FIRST ATTEMPT (PASSING USER QUERY KEYWORD TO GET CASE STUDY***********/
             var Url = SearchKeywordsInCaseStudyXML(UserQueryKeywords, xmlContent);
-            if (Url.Count > 0) return Url;
-
-            /*********SECOND ATTEMPT (PASSING DOMAIN AND USER QUERY KEYWORD TO GET CASE STUDY***********/
-            Url = emailResponseHandler.SearchKeywordsInCaseStudyXML(UserQuery_DomainKeywords, xmlContent);
             return Url;
         }
 
@@ -67,17 +55,18 @@ namespace BusinessLayer
                     return matchesForKeyword.Count > 0 ? 1 : 0; // Consider each keyword match as 1
                 });
 
+                if (matches > 0 && maxMatches > 0 && matches == maxMatches)
+                    matchedUrl.Add(item.Element("url")?.Value);
+
                 if (matches > maxMatches)
                 {
                     matchedUrl.Clear();
                     maxMatches = matches;
                     matchedUrl.Add(item.Element("url")?.Value);
                 }
-                if (matches == maxMatches)
-                    matchedUrl.Add(item.Element("url")?.Value);
             }
 
-            if (matchedUrl.Count > 0) return matchedUrl; // If URL found in ptags, return it
+            if (matchedUrl.Count > 0) return matchedUrl.Distinct().ToList(); // If URL found in ptags, return it
 
             return matchedUrl;
         }
@@ -96,38 +85,64 @@ namespace BusinessLayer
 
             // Initialize the OpenAI API client
             var openAiApi = new OpenAIAPI(apiKey);
-            string Prompt = $"Analyse the below text and extract key information\nText: {inputText}\n\nBased on key information, find a maximum of 2 relevant matched keywords from below keyword list in comma-separated desired format:\n###desired format###:Keyword1, Keyword2\n\nif not matching keyword found then return 'Other'\n\nKeyword list:\n{string.Join("\n", masterKeywords)}\n do not share more than 2 keywords";
-            
-
+            //string Prompt = $"Analyse the below text and extract key information\nText: {inputText}\n\nBased on key information, find a maximum of 2 relevant matched keywords from below keyword list in comma-separated desired format:\n###desired format###:Keyword1, Keyword2\n\nif not matching keyword found then return 'Other' and share reason of not matching\n\nKeyword list:\n{string.Join("\n", masterKeywords)}\n do not share more than 2 keywords";
+            //string Prompt = $"Extract keywords from text\nText: {inputText}\n\nBased on extracted keywords, find relevant matched keywords from below keyword list in comma-separated desired format:\n###desired format###:Keyword1, Keyword2\n\nif not matching keyword found then return 'Other' and share reason of not matching\n\nKeyword list:\n{string.Join(", ", masterKeywords)}";
+            string txt = inputText.Split('|').Length > 1 ? inputText.Split('|')[1] : inputText;
+            string Prompt = $"Text: {txt}\n\nInstructions:Based on the provided text, please find any relevant keywords from the following list. Return any matched or relevant keywords in a comma-separated format. If no matching keyword is found, return 'Other.'\n\nKeyword list:\n{string.Join(", ", masterKeywords)} \n\nExample 1:\n\nInput Text: I want database migration to sharepoint with optimization\n\nExpected Output:Sharepoint Migration, Database Optimization\n\nExample 2:\n\nInput Text:I am looking for job as .Net Developer\n\nExpected Output:Job Application, .Net Developer";
             // Analyze the content using OpenAI
-            var response = await openAiApi.Completions.CreateCompletionAsync(new CompletionRequest()
+            var endpoint = "https://api.openai.com/v1/chat/completions";
+            string extractedInfo = string.Empty;
+            using (var client = new HttpClient())
             {
-                Model = "text-davinci-003",
-                Temperature = 0.1,
-                MaxTokens = 100, // Adjust this value as needed
-                Prompt = Prompt
-            });
+                var request = new HttpRequestMessage(HttpMethod.Post, endpoint);
+                request.Headers.Add("Authorization", $"Bearer {apiKey}");
+                var jsonBody = new
+                {
+                    model = "gpt-3.5-turbo",
+                    messages = new[]
+                                    {
+                            new { role = "system", content = Prompt },
+                            new { role = "user", content = txt }
+                        }
+                };
 
-            // Extracted information from the OpenAI analysis
-            string extractedInfo = response.Completions[0].Text;
+                var jsonBodyString = JsonConvert.SerializeObject(jsonBody);
 
-            // Tokenize the extracted information into words
-            string[] extractedWords = extractedInfo.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                                      .Select(word => word.Trim())
-                                      .ToArray();
+                request.Content = new StringContent(jsonBodyString, Encoding.UTF8, "application/json");
+
+                var response = await client.SendAsync(request);
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new Exception($"Error calling OpenAI API: {response.StatusCode} - {responseContent}");
+                }
+
+                var jsonResponse = JObject.Parse(responseContent);
+                // Update the inner "content" field
+                var choicesArray = jsonResponse["choices"] as JArray;
+
+                if (choicesArray != null && choicesArray.Count > 0)
+                {
+                    // Access the first item in "choices" and update its "content" field
+                    var firstChoice = choicesArray[0] as JObject;
+                    if (firstChoice != null)
+                    {
+                        extractedInfo = firstChoice["message"]["content"].ToString();
+                    }
+                }
+                // Extracted information from the OpenAI analysis
 
 
-            //List<string> matchedKeywords = masterKeywords
-            //.Where(keyword => masterKeywords.Any(masterKeyword => extractedWords.Contains(masterKeyword, StringComparer.OrdinalIgnoreCase)))
-            //.ToList();
+                // Tokenize the extracted information into words
+                string[] extractedWords = extractedInfo.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                                          .Select(word => word.Trim())
+                                          .ToArray();
 
-            if (extractedWords.Any())
-            {
-                return extractedWords.Distinct().ToList();
-            }
-            else
-            {
-                return new List<string> { "Other" };
+                if (extractedWords.Any())
+                    return extractedWords.Distinct().ToList();
+                else
+                    return new List<string> { "Other" };
             }
         }
 
@@ -316,8 +331,8 @@ namespace BusinessLayer
             var openAiApi = new OpenAI_API.OpenAIAPI(apiKey);
 
             // Prompt for OpenAI to determine if the text is career-related
-            string prompt = $"Please analyze the following text and determine if it is related to career, job inquiry, job vacancy, job opening, or searching for a job role:\n\nText: \"{inputText}\"\n\nProvide a 'Yes' or 'No' response.";
-
+            string prompt = $"Please analyze the following text and determine if it is related to career, job inquiry, job vacancy, job opening, job change OR searching for a job role:\n\nText: \"{inputText}\"\n\nProvide a 'Yes' or 'No' response.";
+            //prompt += " If response is 'No' then share the reason";
 
             var response = await openAiApi.Completions.CreateCompletionAsync(new CompletionRequest()
             {

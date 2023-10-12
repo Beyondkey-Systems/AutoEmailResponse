@@ -34,6 +34,8 @@ namespace EmailResponseApi.Controllers
         private readonly IWebHostEnvironment _environment;
         private List<string> CaseStudyFiles;
         private bool IsBeyondIntranet;
+        private bool IsCaseStudyToShow;
+        private bool IsWebSiteUrlToShow;
 
         public EmailResponseController(IWebHostEnvironment environment, IConfiguration configuration)
         {
@@ -66,18 +68,23 @@ namespace EmailResponseApi.Controllers
                     if (IsBeyondIntranet)
                     {
                         string contentRootPath = _environment.ContentRootPath;
-                        string relativeFilePath = "DB/Keyword.xml";
+                        if (isCareerRelated)
+                            IsCaseStudyToShow = IsWebSiteUrlToShow = false;
+                        else
+                        {
+                            string relativeFilePath = "DB/Keyword.xml";
 
-                        // Combine the content root path with the relative file path
-                        string physicalFilePath = Path.Combine(contentRootPath, relativeFilePath);
-                        XDocument xmlDocument = XDocument.Load(physicalFilePath);
-                        var MatchedKeywords = await EmailResponseHandler.ExtractMatchedKeywords(xmlDocument, apiKey, inputText);
-                        bool IsCaseStudyToShow = EmailResponseHandler.IsCaseStudyToShow(MatchedKeywords, xmlDocument);
-                        bool IsWebSiteUrlToShow = EmailResponseHandler.IsWebSiteUrlToShow(MatchedKeywords, xmlDocument);
+                            // Combine the content root path with the relative file path
+                            string physicalFilePath = Path.Combine(contentRootPath, relativeFilePath);
+                            XDocument xmlDocument = XDocument.Load(physicalFilePath);
+                            var MatchedKeywords = await EmailResponseHandler.ExtractMatchedKeywords(xmlDocument, apiKey, inputText);
+                            IsCaseStudyToShow = EmailResponseHandler.IsCaseStudyToShow(MatchedKeywords, xmlDocument);
+                            IsWebSiteUrlToShow = EmailResponseHandler.IsWebSiteUrlToShow(MatchedKeywords, xmlDocument);
+                        }
                         if (IsCaseStudyToShow == false && IsWebSiteUrlToShow == false)
                         {
                             var defaultResponse = GetDefaultResponse(FullName, isCareerRelated, IsBeyondIntranet);
-                           // SendEmail(defaultResponse);
+                            // SendEmail(defaultResponse);
                             return defaultResponse;
                         }
 
@@ -119,7 +126,11 @@ namespace EmailResponseApi.Controllers
                         customInstruction += "<br/><br/>Best Regards,<br/>Beyond Intranet";
                     }
                     else
+                    {
                         customInstruction = _configuration["CustomInstructionBeyondkey"];
+                        customInstruction += _configuration["BKSampleResponse1"]+"\n\n";
+                        customInstruction += _configuration["BKSampleResponse2"] ;
+                    }
 
                     var jsonBody = new
                     {
