@@ -77,7 +77,7 @@ namespace EmailResponseApi.Controllers
                         if (IsCaseStudyToShow == false && IsWebSiteUrlToShow == false)
                         {
                             var defaultResponse = GetDefaultResponse(FullName, isCareerRelated, IsBeyondIntranet);
-                            SendEmail(defaultResponse);
+                           // SendEmail(defaultResponse);
                             return defaultResponse;
                         }
 
@@ -180,7 +180,7 @@ namespace EmailResponseApi.Controllers
                         Content = responseContent,
                         IsCareerRelated = isCareerRelated
                     };
-                    SendEmail(customResponse);
+                    //SendEmail(customResponse);
                     return customResponse;
                 }
             }
