@@ -36,6 +36,7 @@ namespace EmailResponseApi.Controllers
         private bool IsBeyondIntranet;
         private bool IsCaseStudyToShow;
         private bool IsWebSiteUrlToShow;
+        private bool IsDefaultEmailToShow;
 
         public EmailResponseController(IWebHostEnvironment environment, IConfiguration configuration)
         {
@@ -80,8 +81,9 @@ namespace EmailResponseApi.Controllers
                             var MatchedKeywords = await EmailResponseHandler.ExtractMatchedKeywords(xmlDocument, apiKey, inputText);
                             IsCaseStudyToShow = EmailResponseHandler.IsCaseStudyToShow(MatchedKeywords, xmlDocument);
                             IsWebSiteUrlToShow = EmailResponseHandler.IsWebSiteUrlToShow(MatchedKeywords, xmlDocument);
+                            IsDefaultEmailToShow = EmailResponseHandler.IsDefaultEmailToShow(MatchedKeywords, xmlDocument);
                         }
-                        if (IsCaseStudyToShow == false && IsWebSiteUrlToShow == false)
+                        if (IsDefaultEmailToShow || isCareerRelated)
                         {
                             var defaultResponse = GetDefaultResponse(FullName, isCareerRelated, IsBeyondIntranet);
                             // SendEmail(defaultResponse);
@@ -167,7 +169,8 @@ namespace EmailResponseApi.Controllers
                             var content = firstChoice["message"]["content"].ToString();
                             if (IsBeyondIntranet)
                             {
-                                content = Regex.Replace(content, @"(<case study>|case study|casestudy)", $"<a href='{CaseStudyFiles[0]}'>$1</a>", RegexOptions.IgnoreCase);
+                                if (CaseStudyFiles.Count >0)
+                                    content = Regex.Replace(content, @"(<case study>|case study|casestudy)", $"<a href='{CaseStudyFiles[0]}'>$1</a>", RegexOptions.IgnoreCase);
                                 content = Regex.Replace(content, @"(case studies|casestudies|case-studies)", "<a href='https://www.beyondintranet.com/customer-stories'>$1</a>", RegexOptions.IgnoreCase);
                             }
                             content += _configuration["DisplayPoweredByBKChatbot"] == "True" ? $" <br/><br/><span style=\"font-size: 10px; font-family: 'Helvetica Neue';\">[Powered by Beyond Key Chatbot]</span>" : string.Empty;

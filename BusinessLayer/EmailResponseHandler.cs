@@ -490,7 +490,24 @@ namespace BusinessLayer
             return IsWebSiteUrlToShow;
         }
 
+        public static bool IsDefaultEmailToShow(List<string> keywords, XDocument xmlDocument)
+        {
+            bool isFoundInM365 = keywords.Any(k =>
+                xmlDocument.Element("root").Element("M365").Elements("tagname").Any(e => e.Value.Contains(k, StringComparison.OrdinalIgnoreCase)));
+            bool isFoundInProducts = keywords.Any(k =>
+                xmlDocument.Element("root").Element("Products").Elements("tagname").Any(e => e.Value.Contains(k, StringComparison.OrdinalIgnoreCase)));
+            bool isFoundInPowerBI = keywords.Any(k =>
+                xmlDocument.Element("root").Element("PowerBI").Elements("tagname").Any(e => e.Value.Contains(k, StringComparison.OrdinalIgnoreCase)));
+            bool isFoundInInquiry = keywords.Any(k =>
+                xmlDocument.Element("root").Element("Inquiry").Elements("tagname").Any(e => e.Value.Contains(k, StringComparison.OrdinalIgnoreCase)));
+            bool isFoundInOthers = keywords.Any(k =>
+                xmlDocument.Element("root").Element("Others").Elements("tagname").Any(e => e.Value.Contains(k, StringComparison.OrdinalIgnoreCase)));
 
+            if (isFoundInM365 == false && isFoundInProducts == false && isFoundInPowerBI == false && isFoundInInquiry == false && isFoundInOthers==true)
+                return true;
+
+            return false;
+        }
 
     }
 }
