@@ -60,7 +60,7 @@ namespace EmailResponseApi.Controllers
                 var endpoint = "https://api.openai.com/v1/chat/completions";
                 //functionality for isCareerRelated is common for both Beyondkey and Beyondintranet
                 bool isCareerRelated = await EmailResponseHandler.IsCareerRelated(apiKey, inputText);
-                using (var client = new HttpClient())
+                using (var client = new HttpClient { Timeout = TimeSpan.FromSeconds(300) })
                 {
                     var request = new HttpRequestMessage(HttpMethod.Post, endpoint);
                     request.Headers.Add("Authorization", $"Bearer {apiKey}");
