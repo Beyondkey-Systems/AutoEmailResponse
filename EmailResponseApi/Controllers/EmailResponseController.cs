@@ -176,7 +176,7 @@ namespace EmailResponseApi.Controllers
                             var content = firstChoice["message"]["content"].ToString();
                             if (IsBeyondIntranet)
                             {
-                                if (CaseStudyFiles.Count > 0)
+                                if (CaseStudyFiles!=null && CaseStudyFiles.Count > 0)
                                     content = Regex.Replace(content, @"(<case study>|case study|casestudy)", $"<a href='{CaseStudyFiles[0]}'>$1</a>", RegexOptions.IgnoreCase);
                                 content = Regex.Replace(content, @"(case studies|casestudies|case-studies)", "<a href='https://www.beyondintranet.com/customer-stories'>$1</a>", RegexOptions.IgnoreCase);
                             }
