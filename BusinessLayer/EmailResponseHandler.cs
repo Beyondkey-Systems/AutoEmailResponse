@@ -27,12 +27,15 @@ namespace BusinessLayer
             // Combine the content root path with the relative file path
             string physicalFilePath = Path.Combine(contentRootPath, relativeFilePath);
             string xmlContent = System.IO.File.ReadAllText(physicalFilePath);
-            List<string> Url=new List<string>();
+            List<string> Url = new List<string>();
             if (string.IsNullOrEmpty(Product) == false)
             {
-                Url = SearchKeywordsInCaseStudyXML(new List<string> { Product }, xmlContent);
-                if (Url.Count > 0)
-                    return Url;
+                if (Product.ToLower().Contains("other") == false)
+                {
+                    Url = SearchKeywordsInCaseStudyXML(new List<string> { Product }, xmlContent);
+                    if (Url.Count > 0)
+                        return Url;
+                }
             }
             List<string> UserQueryKeywords = await EmailResponseHandler.ExtractKeywordsfromUserQuery(apiKey, inputText);
             UserQueryKeywords = UserQueryKeywords
@@ -442,7 +445,7 @@ namespace BusinessLayer
         public static bool IsCaseStudyToShow(List<string> keywords, XDocument xmlDocument)
         {
             bool IsCaseStudyToShow = false;
-            if(keywords == null || keywords.Count == 0) { return IsCaseStudyToShow; }
+            if (keywords == null || keywords.Count == 0) { return IsCaseStudyToShow; }
 
             bool isFoundInM365 = keywords.Any(k =>
                 xmlDocument.Element("root").Element("M365").Elements("tagname").Any(e => e.Value.Contains(k, StringComparison.OrdinalIgnoreCase)));
@@ -509,7 +512,7 @@ namespace BusinessLayer
             bool isFoundInOthers = keywords.Any(k =>
                 xmlDocument.Element("root").Element("Others").Elements("tagname").Any(e => e.Value.Contains(k, StringComparison.OrdinalIgnoreCase)));
 
-            if (isFoundInM365 == false && isFoundInProducts == false && isFoundInPowerBI == false && isFoundInInquiry == false && isFoundInOthers==true)
+            if (isFoundInM365 == false && isFoundInProducts == false && isFoundInPowerBI == false && isFoundInInquiry == false && isFoundInOthers == true)
                 return true;
 
             return false;

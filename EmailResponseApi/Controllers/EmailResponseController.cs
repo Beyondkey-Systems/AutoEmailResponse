@@ -55,7 +55,7 @@ namespace EmailResponseApi.Controllers
                 IsBeyondIntranet = WebsiteURL.Trim().Contains("beyondintranet") ? true : false;
                 var apiKey = _configuration["apiKey"];
 
-                if (string.IsNullOrEmpty(Product) || Product.ToLower() == "other")
+                if (string.IsNullOrEmpty(Product) || Product.ToLower().Contains("other"))
                     inputText = "Name: " + FullName + "|" + Regex.Replace(inputText, @"\s+", " ").Trim();
                 else
                     inputText = "Name: " + FullName + "|I am intrested in "+Product+"|" + Regex.Replace(inputText, @"\s+", " ").Trim();
