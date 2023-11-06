@@ -16,6 +16,8 @@ using BusinessLayer;
 using Microsoft.Extensions.Hosting;
 using System;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
+using System.Runtime.InteropServices;
+
 namespace EmailResponseApi.Controllers
 {
 
@@ -46,15 +48,17 @@ namespace EmailResponseApi.Controllers
 
 
         [HttpGet("GenerateResponse")]
-        public async Task<CustomResponse> GenerateResponse(string inputText, string WebsiteURL, string FullName, string Email)
+        public async Task<CustomResponse> GenerateResponse(string inputText, string WebsiteURL, string FullName, string Email, string? Product = null)
         {
             try
             {
                 IsBeyondIntranet = WebsiteURL.Trim().Contains("beyondintranet") ? true : false;
                 var apiKey = _configuration["apiKey"];
 
-
-                inputText = "Name: " + FullName + "|" + Regex.Replace(inputText, @"\s+", " ").Trim();
+                if (string.IsNullOrEmpty(Product) || Product.ToLower() == "other")
+                    inputText = "Name: " + FullName + "|" + Regex.Replace(inputText, @"\s+", " ").Trim();
+                else
+                    inputText = "Name: " + FullName + "|I am intrested in "+Product+"|" + Regex.Replace(inputText, @"\s+", " ").Trim();
                 string formattedText = $"Text: \"\"\"\n{inputText}\n\"\"\"";
 
                 var endpoint = "https://api.openai.com/v1/chat/completions";
@@ -99,9 +103,12 @@ namespace EmailResponseApi.Controllers
                         }
                         customInstruction += _configuration["CustomInstructionBeyondIntranet2"];
 
-                        string Domain = EmailResponseHandler.GetDomainFromEmail(Email);
-                        EmailResponseHandler emailResponseHandler = new EmailResponseHandler();
-                        CaseStudyFiles = await emailResponseHandler.FindCaseStudy(contentRootPath, apiKey, Domain, inputText);
+                        if (IsCaseStudyToShow)
+                        {
+                            string Domain = EmailResponseHandler.GetDomainFromEmail(Email);
+                            EmailResponseHandler emailResponseHandler = new EmailResponseHandler();
+                            CaseStudyFiles = await emailResponseHandler.FindCaseStudy(contentRootPath, apiKey, Domain, inputText, Product);
+                        }
 
                         if (IsCaseStudyToShow && CaseStudyFiles.Count > 0 && CaseStudyFiles.Count <= 3)
                             customInstruction += $"Should always force to take a moment to review relevant case study.";
@@ -130,11 +137,11 @@ namespace EmailResponseApi.Controllers
                     else
                     {
                         customInstruction = _configuration["CustomInstructionBeyondkey"];
-                        customInstruction += _configuration["BKSampleResponse1"]+"\n\n";
-                        customInstruction += _configuration["BKSampleResponse2"] ;
+                        customInstruction += _configuration["BKSampleResponse1"] + "\n\n";
+                        customInstruction += _configuration["BKSampleResponse2"];
                     }
 
-                    var jsonBody = new
+                   var jsonBody = new
                     {
                         model = "gpt-3.5-turbo",
                         messages = new[]
@@ -169,7 +176,7 @@ namespace EmailResponseApi.Controllers
                             var content = firstChoice["message"]["content"].ToString();
                             if (IsBeyondIntranet)
                             {
-                                if (CaseStudyFiles.Count >0)
+                                if (CaseStudyFiles.Count > 0)
                                     content = Regex.Replace(content, @"(<case study>|case study|casestudy)", $"<a href='{CaseStudyFiles[0]}'>$1</a>", RegexOptions.IgnoreCase);
                                 content = Regex.Replace(content, @"(case studies|casestudies|case-studies)", "<a href='https://www.beyondintranet.com/customer-stories'>$1</a>", RegexOptions.IgnoreCase);
                             }
@@ -207,11 +214,11 @@ namespace EmailResponseApi.Controllers
                 };
             }
         }
-        private CustomResponse GetDefaultResponse(string FullName, bool IsCareerRelated,bool isBeyondIntranet)
+        private CustomResponse GetDefaultResponse(string FullName, bool IsCareerRelated, bool isBeyondIntranet)
         {
             string DefaultResponse = $"Hello {FullName},<br/><br/>Thank you for reaching out to us. We appreciate your interest.";
             DefaultResponse += "<br/><br/>Your query is important to us, and we want to ensure we provide you with the best possible information and assistance. Our dedicated team is currently reviewing your request, and you can expect to hear back from us shortly.";
-            DefaultResponse += isBeyondIntranet ? "<br/><br/>Best Regards,<br/>Beyond Intranet": "<br/><br/>Best Regards,<br/>Beyondkey Systems";
+            DefaultResponse += isBeyondIntranet ? "<br/><br/>Best Regards,<br/>Beyond Intranet" : "<br/><br/>Best Regards,<br/>Beyondkey Systems";
             DefaultResponse += _configuration["DisplayPoweredByBKChatbot"] == "True" ? $" <br/><br/><span style=\"font-size: 10px; font-family: 'Helvetica Neue';\">[Powered by Beyond Key Chatbot]</span>" : string.Empty;
             DefaultResponse += _configuration["DisplayCautionText"] == "True" ? $" <br/><span style=\"font-size: 10px; font-family: 'Helvetica Neue';\">{_configuration["CautionText"]}</span>" : string.Empty;
 

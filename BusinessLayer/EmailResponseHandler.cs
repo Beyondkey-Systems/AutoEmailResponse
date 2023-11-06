@@ -19,7 +19,7 @@ namespace BusinessLayer
 {
     public class EmailResponseHandler
     {
-        public async Task<List<string>> FindCaseStudy(string contentRootPath, string apiKey, string Domain, string inputText)
+        public async Task<List<string>> FindCaseStudy(string contentRootPath, string apiKey, string Domain, string inputText, string Product)
         {
             EmailResponseHandler emailResponseHandler = new EmailResponseHandler();
             string relativeFilePath = "DB/CaseStudy.xml";
@@ -27,13 +27,19 @@ namespace BusinessLayer
             // Combine the content root path with the relative file path
             string physicalFilePath = Path.Combine(contentRootPath, relativeFilePath);
             string xmlContent = System.IO.File.ReadAllText(physicalFilePath);
-
+            List<string> Url=new List<string>();
+            if (string.IsNullOrEmpty(Product) == false)
+            {
+                Url = SearchKeywordsInCaseStudyXML(new List<string> { Product }, xmlContent);
+                if (Url.Count > 0)
+                    return Url;
+            }
             List<string> UserQueryKeywords = await EmailResponseHandler.ExtractKeywordsfromUserQuery(apiKey, inputText);
             UserQueryKeywords = UserQueryKeywords
            .SelectMany(keyword => keyword.Split(',').Select(trimmedKeyword => trimmedKeyword.Trim()))
            .ToList();
 
-            var Url = SearchKeywordsInCaseStudyXML(UserQueryKeywords, xmlContent);
+            Url = SearchKeywordsInCaseStudyXML(UserQueryKeywords, xmlContent);
             return Url;
         }
 
@@ -436,7 +442,7 @@ namespace BusinessLayer
         public static bool IsCaseStudyToShow(List<string> keywords, XDocument xmlDocument)
         {
             bool IsCaseStudyToShow = false;
-
+            if(keywords == null || keywords.Count == 0) { return IsCaseStudyToShow; }
 
             bool isFoundInM365 = keywords.Any(k =>
                 xmlDocument.Element("root").Element("M365").Elements("tagname").Any(e => e.Value.Contains(k, StringComparison.OrdinalIgnoreCase)));
