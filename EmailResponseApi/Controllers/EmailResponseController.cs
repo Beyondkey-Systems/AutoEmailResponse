@@ -17,6 +17,7 @@ using Microsoft.Extensions.Hosting;
 using System;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using System.Runtime.InteropServices;
+using EmailResponseApi.Helpers;
 
 namespace EmailResponseApi.Controllers
 {
@@ -53,8 +54,7 @@ namespace EmailResponseApi.Controllers
             try
             {
                 IsBeyondIntranet = WebsiteURL.Trim().Contains("beyondintranet") ? true : false;
-                var apiKey = _configuration["apiKey"];
-
+                var apiKey = EncryptDecrypt.Decrypt(_configuration["ApiPasscode"] ?? string.Empty);
                 if (string.IsNullOrEmpty(Product) || Product.ToLower().Contains("other"))
                     inputText = "Name: " + FullName + "|" + Regex.Replace(inputText, @"\s+", " ").Trim();
                 else
