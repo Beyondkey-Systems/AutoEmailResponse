@@ -345,7 +345,7 @@ namespace BusinessLayer
 
             var response = await openAiApi.Completions.CreateCompletionAsync(new CompletionRequest()
             {
-                Model = "text-davinci-003",
+                Model = "gpt-3.5-turbo-instruct",
                 Temperature = 0.1,
                 MaxTokens = 10, // Limit response to a single token (Yes or No)
                 Prompt = prompt
@@ -370,7 +370,7 @@ namespace BusinessLayer
             {
                 var response = await openAiApi.Completions.CreateCompletionAsync(new CompletionRequest()
                 {
-                    Model = "text-davinci-003",
+                    Model = "gpt-3.5-turbo-instruct",
                     Temperature = 0.1,
                     MaxTokens = 50,
                     Prompt = $"'{customInstruction}'\nKeywords:"
@@ -412,7 +412,7 @@ namespace BusinessLayer
             {
                 var response = await openAiApi.Completions.CreateCompletionAsync(new CompletionRequest()
                 {
-                    Model = "text-davinci-003",
+                    Model = "gpt-3.5-turbo-instruct",
                     Temperature = 0.1,
                     MaxTokens = 50,
                     Prompt = $"'{customInstruction}'\nKeywords:"

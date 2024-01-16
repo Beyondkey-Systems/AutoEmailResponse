@@ -87,7 +87,7 @@ namespace EmailResponseApi.Controllers
                             IsWebSiteUrlToShow = EmailResponseHandler.IsWebSiteUrlToShow(MatchedKeywords, xmlDocument);
                             IsDefaultEmailToShow = EmailResponseHandler.IsDefaultEmailToShow(MatchedKeywords, xmlDocument);
                         }
-                        if (IsDefaultEmailToShow || isCareerRelated)
+                        if (IsDefaultEmailToShow)
                         {
                             var defaultResponse = GetDefaultResponse(FullName, isCareerRelated, IsBeyondIntranet);
                             // SendEmail(defaultResponse);
